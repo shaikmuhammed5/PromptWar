@@ -32,7 +32,7 @@ import type { ChatMode, ChatTurn, Profile } from "@/lib/types";
 function Loading() {
   return (
     <main className="flex min-h-screen items-center justify-center px-5">
-      <p className="text-muted">Loading Zync…</p>
+      <p className="text-ink-muted">Loading Zync…</p>
     </main>
   );
 }

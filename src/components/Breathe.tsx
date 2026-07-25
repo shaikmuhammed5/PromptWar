@@ -44,27 +44,27 @@ export function Breathe({ onClose }: { onClose: () => void }) {
   const { phase, remaining } = phaseAt(elapsed);
 
   return (
-    <div className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-surface p-8">
+    <div className="flex flex-col items-center gap-7 rounded-[12px] border border-hairline bg-surface-1 p-8">
       <div
         aria-hidden
-        className="breathe-orb flex h-40 w-40 items-center justify-center rounded-full bg-accent/25"
+        className="breathe-orb flex h-40 w-40 items-center justify-center rounded-full bg-ink/[0.06]"
       >
-        <div className="h-24 w-24 rounded-full bg-accent/60" />
+        <div className="h-24 w-24 rounded-full bg-ink/[0.12]" />
       </div>
       <p role="status" aria-live="polite" className="text-center">
-        <span className="block text-3xl font-bold">{phase.label}</span>
-        <span className="mt-1 block text-5xl font-black tabular-nums text-accent">
+        <span className="t-headline block">{phase.label}</span>
+        <span className="t-display-md mt-2 block tabular-nums">
           {remaining}
         </span>
       </p>
-      <p className="text-center text-sm text-muted">
+      <p className="t-body-sm max-w-xs text-center text-ink-muted">
         Follow the circle. Four in, hold seven, out for eight. Three rounds is enough to
         drop your heart rate.
       </p>
       <button
         type="button"
         onClick={onClose}
-        className="min-h-12 rounded-xl border border-border px-6 py-2 font-semibold"
+        className="pressable t-button min-h-12 rounded-[8px] border border-hairline px-8 py-2 hover:border-ink-subtle"
       >
         Done
       </button>

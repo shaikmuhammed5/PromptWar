@@ -26,26 +26,26 @@ export function HomeDashboard({
       <button
         type="button"
         onClick={() => onNavigate("sos")}
-        className="sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-3 rounded-3xl bg-danger text-white md:min-h-40"
+        className="pressable sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-3 rounded-[16px] bg-emergency text-white md:min-h-44"
       >
         <ShieldAlert aria-hidden size={56} strokeWidth={1.75} />
-        <span className="text-3xl font-black">I need help now</span>
-        <span className="text-sm opacity-90">One tap. No typing.</span>
+        <span className="t-display-md">I need help now</span>
+        <span className="t-body-sm opacity-90">One tap. No typing.</span>
       </button>
 
       <Card>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm text-muted">Where you are</p>
-            <p className="text-lg font-bold">{STREAK_LABELS[profile.streak]}</p>
+            <p className="t-caption uppercase tracking-wide text-ink-subtle">Where you are</p>
+            <p className="t-card-title mt-1">{STREAK_LABELS[profile.streak]}</p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-muted">SOS moments survived</p>
-            <p className="text-2xl font-black text-safe">{state.sosEvents.length}</p>
+            <p className="t-caption uppercase tracking-wide text-ink-subtle">Urges outlasted</p>
+            <p className="t-card-title mt-1 tabular-nums">{state.sosEvents.length}</p>
           </div>
         </div>
         {lastCheckIn ? (
-          <p className="mt-4 border-t border-border pt-4 text-sm text-muted">
+          <p className="mt-4 border-t border-hairline pt-4 text-sm text-ink-muted">
             Last check-in: {lastCheckIn.summary}
           </p>
         ) : null}
@@ -58,19 +58,19 @@ export function HomeDashboard({
             key={tab.view}
             type="button"
             onClick={() => onNavigate(tab.view)}
-            className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-surface transition hover:border-accent"
+            className="pressable flex min-h-24 flex-col items-center justify-center gap-2 rounded-[12px] border border-hairline bg-surface-1 hover:border-ink-subtle"
           >
-            <tab.Icon aria-hidden size={26} strokeWidth={1.75} className="text-accent" />
-            <span className="text-sm font-semibold">{tab.label}</span>
+            <tab.Icon aria-hidden size={22} strokeWidth={1.75} className="text-ink-muted" />
+            <span className="t-body-sm font-medium">{tab.label}</span>
           </button>
         ))}
         <button
           type="button"
           onClick={() => onNavigate("breathe")}
-          className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-surface transition hover:border-accent"
+          className="pressable flex min-h-24 flex-col items-center justify-center gap-2 rounded-[12px] border border-hairline bg-surface-1 hover:border-ink-subtle"
         >
-          <Wind aria-hidden size={26} strokeWidth={1.75} className="text-accent" />
-          <span className="text-sm font-semibold">Breathe</span>
+          <Wind aria-hidden size={22} strokeWidth={1.75} className="text-ink-muted" />
+          <span className="t-body-sm font-medium">Breathe</span>
         </button>
       </div>
     </div>

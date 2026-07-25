@@ -78,7 +78,7 @@ export function Learn({ profile }: { profile: Profile }) {
               {lesson.body}
             </div>
             <div className="mt-4">
-              <PrimaryButton tone="quiet" onClick={() => speak(lesson.body)}>
+              <PrimaryButton tone="secondary" onClick={() => speak(lesson.body)}>
                 <span className="flex items-center justify-center gap-2">
                   <Volume2 aria-hidden size={20} /> Read this to me
                 </span>
@@ -97,12 +97,12 @@ export function Learn({ profile }: { profile: Profile }) {
                     const isAnswer = optionIndex === question.answerIndex;
                     const isChosen = chosen === optionIndex;
                     const style = !answered
-                      ? "border-border bg-surface-2"
+                      ? "border-hairline bg-surface-2"
                       : isAnswer
-                        ? "border-safe bg-safe/15"
+                        ? "border-safe bg-safe/[0.1]"
                         : isChosen
-                          ? "border-danger bg-danger/15"
-                          : "border-border bg-surface-2 opacity-60";
+                          ? "border-emergency bg-emergency/[0.09]"
+                          : "border-hairline bg-surface-2 opacity-60";
                     return (
                       <button
                         key={optionIndex}
@@ -114,7 +114,7 @@ export function Learn({ profile }: { profile: Profile }) {
                             [questionIndex]: optionIndex,
                           }))
                         }
-                        className={`min-h-14 rounded-xl border px-4 py-3 text-left ${style}`}
+                        className={`min-h-14 rounded-[8px] border px-4 py-3 text-left ${style}`}
                       >
                         {option}
                       </button>
@@ -122,7 +122,7 @@ export function Learn({ profile }: { profile: Profile }) {
                   })}
                 </div>
                 {answered ? (
-                  <p className="mt-3 text-sm text-muted">{question.explanation}</p>
+                  <p className="mt-3 text-sm text-ink-muted">{question.explanation}</p>
                 ) : null}
               </Card>
             );

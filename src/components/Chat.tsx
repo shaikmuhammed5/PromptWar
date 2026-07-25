@@ -300,14 +300,14 @@ export function Chat({
             <h2 className="text-lg font-bold">
               {CHAT_MODES.find((mode) => mode.id === setup.mode)?.title}
             </h2>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-ink-muted">
               {setup.scenario ?? setup.game ?? "Saathi is listening"}
             </p>
           </div>
           <button
             type="button"
             onClick={finish}
-            className="min-h-12 rounded-xl border border-border px-4 text-sm font-semibold"
+            className="min-h-12 rounded-[8px] border border-hairline px-4 text-sm font-semibold"
           >
             End session
           </button>
@@ -315,7 +315,7 @@ export function Chat({
 
         {setup.mode === "distract" ? (
           <div className="mt-4">
-            <div className="flex items-center justify-between text-sm text-muted">
+            <div className="flex items-center justify-between text-sm text-ink-muted">
               <span>{minutes} min ridden out</span>
               <span>urges usually crest by 20</span>
             </div>
@@ -336,12 +336,12 @@ export function Chat({
             className={`flex ${turn.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-base leading-relaxed ${
+              className={`max-w-[85%] rounded-[12px] px-4 py-3 text-base leading-relaxed ${
                 turn.role === "user"
-                  ? "bg-accent text-[#221503]"
+                  ? "bg-ink text-on-primary"
                   : turn.text.startsWith("Coach:")
-                    ? "border border-accent/50 bg-accent/10"
-                    : "border border-border bg-surface"
+                    ? "border border-fin/40 bg-fin/[0.08]"
+                    : "border border-hairline bg-surface-1"
               }`}
             >
               {turn.text}
@@ -350,7 +350,7 @@ export function Chat({
                   type="button"
                   onClick={() => speak(turn.text)}
                   aria-label="Read this aloud"
-                  className="mt-2 flex items-center gap-1 text-xs text-muted"
+                  className="mt-2 flex items-center gap-1 text-xs text-ink-muted"
                 >
                   <Volume2 aria-hidden size={14} /> Read aloud
                 </button>
@@ -359,7 +359,7 @@ export function Chat({
           </div>
         ))}
         {streaming && turns[turns.length - 1]?.role !== "assistant" ? (
-          <p className="text-sm text-muted" role="status">
+          <p className="text-sm text-ink-muted" role="status">
             Saathi is typing…
           </p>
         ) : null}
@@ -369,7 +369,7 @@ export function Chat({
       {error ? <ErrorNote message={error} /> : null}
 
       {stage === "wrapping" && sendable ? (
-        <p className="rounded-xl bg-surface-2 p-3 text-sm text-muted">
+        <p className="rounded-[8px] bg-surface-2 p-3 text-sm text-ink-muted">
           You have been here a while — {userTurns} of {HARD_LIMIT} messages. Zync is a
           bridge to people, not a replacement for them.
         </p>
@@ -378,7 +378,7 @@ export function Chat({
       {!sendable ? (
         <Card>
           <h3 className="font-bold">That is enough for now</h3>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-ink-muted">
             This session has run its length on purpose. Talking to a person will do more
             than talking to me.{" "}
             {profile.anchorName
@@ -389,12 +389,12 @@ export function Chat({
             {profile.anchorPhone ? (
               <a
                 href={`tel:${profile.anchorPhone.replace(/[^0-9+]/g, "")}`}
-                className="flex min-h-14 items-center justify-center rounded-xl bg-safe px-5 font-semibold text-[#05230f]"
+                className="flex min-h-14 items-center justify-center rounded-[8px] bg-safe px-5 font-semibold text-white"
               >
                 Call {profile.anchorName || "your anchor"}
               </a>
             ) : null}
-            <PrimaryButton tone="quiet" onClick={finish}>
+            <PrimaryButton tone="secondary" onClick={finish}>
               Close this session
             </PrimaryButton>
           </div>
@@ -402,7 +402,7 @@ export function Chat({
       ) : null}
 
       {setup.mode === "practice" && turns.length > 1 && !score ? (
-        <PrimaryButton tone="quiet" onClick={() => void endRehearsal()} disabled={scoring}>
+        <PrimaryButton tone="secondary" onClick={() => void endRehearsal()} disabled={scoring}>
           {scoring ? "Scoring…" : "End rehearsal and score me"}
         </PrimaryButton>
       ) : null}
@@ -413,20 +413,20 @@ export function Chat({
           {score.worked.length ? (
             <ul className="mt-3 grid gap-2">
               {score.worked.map((item, index) => (
-                <li key={index} className="rounded-xl bg-safe/12 p-3 text-base">
+                <li key={index} className="rounded-[8px] bg-safe/[0.09] p-3 text-base">
                   {item}
                 </li>
               ))}
             </ul>
           ) : null}
-          <p className="mt-4 text-sm text-muted">{score.strengthen}</p>
-          <div className="mt-4 rounded-xl border border-accent/40 bg-accent/10 p-4">
-            <h4 className="text-sm font-semibold text-accent">Keep this in your pocket</h4>
+          <p className="mt-4 text-sm text-ink-muted">{score.strengthen}</p>
+          <div className="mt-4 rounded-[8px] border border-fin/40 bg-fin/[0.08] p-4">
+            <h4 className="text-sm font-semibold text-fin">Keep this in your pocket</h4>
             <p className="mt-1 text-lg">“{score.pocketLine}”</p>
             <button
               type="button"
               onClick={() => speak(score.pocketLine)}
-              className="mt-2 flex items-center gap-1 text-xs text-muted"
+              className="mt-2 flex items-center gap-1 text-xs text-ink-muted"
             >
               <Volume2 aria-hidden size={14} /> Hear it
             </button>
@@ -440,15 +440,15 @@ export function Chat({
             event.preventDefault();
             if (setup) void send(draft, setup, turns);
           }}
-          className="sticky bottom-4 flex gap-2 rounded-2xl border border-border bg-surface p-2"
+          className="sticky bottom-4 flex gap-2 rounded-[12px] border border-hairline bg-surface-1 p-2"
         >
           <button
             type="button"
             onClick={listening ? () => listenerRef.current?.stop() : startDictation}
             aria-label={listening ? "Stop dictating" : "Dictate a message"}
             aria-pressed={listening}
-            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border ${
-              listening ? "border-danger bg-danger/15" : "border-border bg-surface-2"
+            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border ${
+              listening ? "border-emergency bg-emergency/[0.09]" : "border-hairline bg-surface-2"
             }`}
           >
             {listening ? <Square aria-hidden size={20} /> : <Mic aria-hidden size={20} />}
@@ -461,13 +461,13 @@ export function Chat({
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             placeholder={listening ? "Listening…" : "Say something…"}
-            className="min-h-14 flex-1 rounded-xl border border-border bg-surface-2 px-4 text-base"
+            className="min-h-14 flex-1 rounded-[8px] border border-hairline bg-surface-2 px-4 text-base"
           />
           <button
             type="submit"
             disabled={streaming || !draft.trim()}
             aria-label="Send"
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent text-[#221503] disabled:opacity-40"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] bg-ink text-on-primary disabled:opacity-40"
           >
             <Send aria-hidden size={20} />
           </button>
@@ -509,15 +509,15 @@ function ModePicker({
                 type="button"
                 onClick={() => setMode(option.id)}
                 aria-pressed={mode === option.id}
-                className={`rounded-2xl border p-4 text-left transition ${
+                className={`rounded-[12px] border p-4 text-left transition ${
                   mode === option.id
-                    ? "border-accent bg-accent/10"
-                    : "border-border bg-surface-2 hover:border-accent/60"
+                    ? "border-ink bg-fin/[0.08]"
+                    : "border-hairline bg-surface-2 hover:border-ink-subtle"
                 }`}
               >
-                <Icon aria-hidden size={22} className="text-accent" />
+                <Icon aria-hidden size={22} className="text-fin" />
                 <span className="mt-2 block font-bold">{option.title}</span>
-                <span className="mt-1 block text-sm text-muted">{option.blurb}</span>
+                <span className="mt-1 block text-sm text-ink-muted">{option.blurb}</span>
               </button>
             );
           })}
@@ -548,7 +548,7 @@ function ModePicker({
               />
             ))}
           </div>
-          <p className="mt-4 text-sm text-muted">
+          <p className="mt-4 text-sm text-ink-muted">
             I will push back, but only twice — like most people actually do. If it stops
             being practice, I break character.
           </p>
@@ -568,7 +568,7 @@ function ModePicker({
               />
             ))}
           </div>
-          <p className="mt-4 text-sm text-muted">
+          <p className="mt-4 text-sm text-ink-muted">
             No recovery talk unless you start it. The point is that your attention is
             somewhere else while the urge falls.
           </p>
@@ -590,7 +590,7 @@ function ModePicker({
         </PrimaryButton>
       ) : null}
 
-      <p className="text-center text-xs text-muted">
+      <p className="text-center text-xs text-ink-muted">
         Sessions run to about {WRAP_UP_AFTER} messages before Saathi starts winding down.
         That limit is deliberate.
       </p>

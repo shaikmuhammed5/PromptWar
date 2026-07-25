@@ -40,7 +40,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
 
   return (
     <main className="mx-auto w-full max-w-lg px-5 py-8">
-      <p className="mb-6 text-sm text-muted">Step {step + 1} of 4</p>
+      <p className="mb-6 text-sm text-ink-muted">Step {step + 1} of 4</p>
 
       {step === 0 ? (
         <Card>
@@ -121,7 +121,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 placeholder="Arun"
-                className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
+                className="min-h-14 rounded-[8px] border border-hairline bg-surface-2 px-4 text-base"
               />
             </label>
             <label className="grid gap-2 text-sm font-medium">
@@ -130,7 +130,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
                 value={anchorName}
                 onChange={(event) => setAnchorName(event.target.value)}
                 placeholder="Amma"
-                className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
+                className="min-h-14 rounded-[8px] border border-hairline bg-surface-2 px-4 text-base"
               />
             </label>
             <label className="grid gap-2 text-sm font-medium">
@@ -140,7 +140,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
                 onChange={(event) => setAnchorPhone(event.target.value)}
                 inputMode="tel"
                 placeholder="98xxxxxxxx"
-                className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
+                className="min-h-14 rounded-[8px] border border-hairline bg-surface-2 px-4 text-base"
               />
             </label>
             <PrimaryButton onClick={finish}>Enter Zync</PrimaryButton>
@@ -152,7 +152,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
         <button
           type="button"
           onClick={() => setStep((value) => value - 1)}
-          className="mt-5 min-h-12 text-sm text-muted underline"
+          className="mt-5 min-h-12 text-sm text-ink-muted underline"
         >
           Back
         </button>

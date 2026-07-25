@@ -91,8 +91,8 @@ export function Journal({
           title="Show Zync the place"
           subtitle="A street, a room, a shop, a face in a crowd. Zync names what in it pulls at you."
         />
-        <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-2 p-6 text-center transition hover:border-accent">
-          <Camera aria-hidden size={44} strokeWidth={1.75} className="text-accent" />
+        <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border-2 border-dashed border-hairline bg-surface-2 p-6 text-center transition hover:border-ink">
+          <Camera aria-hidden size={44} strokeWidth={1.75} className="text-fin" />
           <span className="font-semibold">Take or choose a photo</span>
           <input
             type="file"
@@ -109,7 +109,7 @@ export function Journal({
           <img
             src={preview}
             alt="The photo you shared with Zync"
-            className="mt-4 max-h-64 w-full rounded-xl object-cover"
+            className="mt-4 max-h-64 w-full rounded-[8px] object-cover"
           />
         ) : null}
 
@@ -129,12 +129,12 @@ export function Journal({
         <Card>
           {analysis.triggers.length ? (
             <>
-              <h3 className="text-sm font-semibold text-muted">What Zync sees here</h3>
+              <h3 className="text-sm font-semibold text-ink-muted">What Zync sees here</h3>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {analysis.triggers.map((trigger) => (
                   <li
                     key={trigger}
-                    className="rounded-full bg-accent/20 px-3 py-1 text-sm font-medium text-[#ffddab]"
+                    className="rounded-full bg-fin/[0.12] px-3 py-1 text-sm font-medium text-ink"
                   >
                     {trigger}
                   </li>
@@ -144,7 +144,7 @@ export function Journal({
           ) : null}
           <p className="mt-4 text-lg leading-relaxed">{analysis.advice}</p>
           {analysis.triggers.length ? (
-            <p className="mt-3 text-sm text-muted">
+            <p className="mt-3 text-sm text-ink-muted">
               Added to your triggers. Your SOS scripts will account for this from now on.
             </p>
           ) : null}

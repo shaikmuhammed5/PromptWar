@@ -21,10 +21,10 @@ const TOOL_LABELS: Readonly<Record<string, string>> = {
 };
 
 function riskTone(score: number): { label: string; className: string } {
-  if (score >= 7) return { label: "High risk", className: "bg-danger/20 text-[#ffc9cb]" };
+  if (score >= 7) return { label: "High risk", className: "bg-emergency/[0.12] text-ink" };
   if (score >= 4)
-    return { label: "Wobbling", className: "bg-accent/20 text-[#ffddab]" };
-  return { label: "Steady", className: "bg-safe/20 text-[#b6f5cd]" };
+    return { label: "Wobbling", className: "bg-fin/[0.12] text-ink" };
+  return { label: "Steady", className: "bg-safe/20 text-ink" };
 }
 
 /**
@@ -117,10 +117,10 @@ export function CheckIn({
           type="button"
           onClick={listening ? stopListening : startListening}
           aria-pressed={listening}
-          className={`flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 text-lg font-bold transition ${
+          className={`flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-[12px] border-2 text-lg font-bold transition ${
             listening
-              ? "border-danger bg-danger/15 text-[#ffc9cb]"
-              : "border-border bg-surface-2 hover:border-accent"
+              ? "border-emergency bg-emergency/[0.09] text-ink"
+              : "border-hairline bg-surface-2 hover:border-ink"
           }`}
         >
           {listening ? (
@@ -139,14 +139,14 @@ export function CheckIn({
           both routes end in the same place.
         */}
         <div className="mt-4 grid gap-3">
-          <label className="grid gap-2 text-sm text-muted">
+          <label className="grid gap-2 text-sm text-ink-muted">
             Or write it — same analysis either way. Speaking fills this in.
             <textarea
               value={transcript}
               onChange={(event) => setTranscript(event.target.value)}
               rows={3}
               placeholder="Today was rough, I nearly went into the bar near work…"
-              className="rounded-xl border border-border bg-surface-2 p-4 text-base italic text-foreground"
+              className="rounded-[8px] border border-hairline bg-surface-2 p-4 text-base italic text-ink"
             />
           </label>
           <PrimaryButton
@@ -183,21 +183,21 @@ export function CheckIn({
           <p className="mt-4 text-lg leading-relaxed">{analysis.summary}</p>
 
           {analysis.triggersDetected.length ? (
-            <p className="mt-3 text-sm text-muted">
+            <p className="mt-3 text-sm text-ink-muted">
               Triggers Zync heard: {analysis.triggersDetected.join(", ")}
             </p>
           ) : null}
 
           {analysis.toolsRecommended.length ? (
             <div className="mt-5">
-              <h3 className="mb-3 text-sm font-semibold text-muted">
+              <h3 className="mb-3 text-sm font-semibold text-ink-muted">
                 Because of what you said, start here
               </h3>
               <div className="grid gap-3">
                 {analysis.toolsRecommended.map((tool) => (
                   <PrimaryButton
                     key={tool}
-                    tone={tool === "sos" ? "danger" : "quiet"}
+                    tone={tool === "sos" ? "emergency" : "secondary"}
                     onClick={() => onOpenTool(tool)}
                   >
                     {TOOL_LABELS[tool] ?? tool}

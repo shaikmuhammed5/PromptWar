@@ -9,11 +9,11 @@ import { speak, stopSpeaking } from "@/lib/speech";
 import type { Profile } from "@/lib/types";
 
 const CRAVING_LEVELS = [
-  { level: 1, label: "A faint pull", tone: "bg-safe" },
-  { level: 2, label: "Nagging at me", tone: "bg-safe" },
-  { level: 3, label: "Hard to ignore", tone: "bg-accent" },
-  { level: 4, label: "Very strong", tone: "bg-accent" },
-  { level: 5, label: "About to use", tone: "bg-danger" },
+  { level: 1, label: "A faint pull", tone: "bg-ink-subtle" },
+  { level: 2, label: "Nagging at me", tone: "bg-ink-muted" },
+  { level: 3, label: "Hard to ignore", tone: "bg-ink" },
+  { level: 4, label: "Very strong", tone: "bg-emergency/70" },
+  { level: 5, label: "About to use", tone: "bg-emergency" },
 ] as const;
 
 /**
@@ -26,7 +26,7 @@ function CravingMeter({ level, tone }: { level: number; tone: string }) {
       {[1, 2, 3, 4, 5].map((step) => (
         <span
           key={step}
-          className={`w-2.5 rounded-sm ${step <= level ? tone : "bg-border"}`}
+          className={`w-2.5 rounded-[2px] ${step <= level ? tone : "bg-hairline"}`}
           style={{ height: `${8 + step * 6}px` }}
         />
       ))}
@@ -137,8 +137,8 @@ export function SosFlow({
     <main className="mx-auto w-full max-w-lg px-5 py-8">
       {stage === "scale" ? (
         <Card>
-          <h1 className="text-3xl font-black">How strong is it right now?</h1>
-          <p className="mt-2 text-muted">
+          <h1 className="t-display-md">How strong is it right now?</h1>
+          <p className="t-body-lg mt-3 text-ink-muted">
             One tap. That is all Zync needs.
           </p>
           <div className="mt-6 grid gap-3">
@@ -147,10 +147,10 @@ export function SosFlow({
                 key={option.level}
                 type="button"
                 onClick={() => requestScript(option.level)}
-                className="flex min-h-20 items-center gap-4 rounded-2xl border border-border bg-surface-2 px-5 text-left transition hover:border-accent"
+                className="pressable flex min-h-20 items-center gap-4 rounded-[12px] border border-hairline bg-surface-1 px-5 text-left hover:border-ink-subtle"
               >
                 <CravingMeter level={option.level} tone={option.tone} />
-                <span className="text-lg font-semibold">{option.label}</span>
+                <span className="t-body-lg font-medium">{option.label}</span>
               </button>
             ))}
           </div>
@@ -160,7 +160,7 @@ export function SosFlow({
               abandon();
               onExit();
             }}
-            className="mt-6 min-h-12 w-full text-sm text-muted underline"
+            className="t-body-sm mt-6 min-h-12 w-full text-ink-muted underline underline-offset-4"
           >
             Go back
           </button>
@@ -170,7 +170,7 @@ export function SosFlow({
       {stage === "script" ? (
         <div className="grid gap-5">
           <Card>
-            <h1 className="text-2xl font-black">Do this with me</h1>
+            <h1 className="t-headline">Do this with me</h1>
             {streaming && !script ? (
               <div className="mt-4">
                 <Spinner label="Zync is writing your steps…" />
@@ -180,7 +180,7 @@ export function SosFlow({
             {script ? (
               <div
                 aria-live="polite"
-                className="mt-4 whitespace-pre-wrap text-lg leading-relaxed"
+                className="t-body-lg mt-5 whitespace-pre-wrap"
               >
                 {script}
               </div>
@@ -189,7 +189,7 @@ export function SosFlow({
             {error ? (
               <div className="mt-4 grid gap-3">
                 <ErrorNote message={error} />
-                <p className="text-sm text-muted">
+                <p className="text-sm text-ink-muted">
                   The steps below still work without any AI. Start with breathing.
                 </p>
               </div>
@@ -197,7 +197,7 @@ export function SosFlow({
 
             {script && !streaming ? (
               <div className="mt-5 grid gap-3">
-                <PrimaryButton tone="quiet" onClick={() => speak(script)}>
+                <PrimaryButton tone="secondary" onClick={() => speak(script)}>
                   <span className="flex items-center justify-center gap-2">
                     <Volume2 aria-hidden size={20} /> Read it to me again
                   </span>
@@ -207,12 +207,12 @@ export function SosFlow({
           </Card>
 
           <Card>
-            <h2 className="mb-3 text-lg font-bold">Right now, you can also</h2>
+            <h2 className="t-body-sm mb-4 font-medium uppercase tracking-wide text-ink-subtle">Right now, you can also</h2>
             <div className="grid gap-3">
               {profile.anchorPhone ? (
                 <a
                   href={`tel:${profile.anchorPhone.replace(/[^0-9+]/g, "")}`}
-                  className="flex min-h-14 items-center justify-center rounded-xl bg-safe px-5 font-semibold text-[#05230f]"
+                  className="pressable t-button flex min-h-12 items-center justify-center rounded-[8px] bg-safe px-5 text-white"
                 >
                   <span className="flex items-center gap-2">
                     <PhoneCall aria-hidden size={20} /> Call{" "}
@@ -221,7 +221,7 @@ export function SosFlow({
                 </a>
               ) : null}
               <PrimaryButton
-                tone="quiet"
+                tone="secondary"
                 onClick={() => {
                   abandon();
                   setBreathing(true);
@@ -233,7 +233,7 @@ export function SosFlow({
               </PrimaryButton>
               <a
                 href="tel:14416"
-                className="flex min-h-14 items-center justify-center rounded-xl border border-border bg-surface-2 px-5 font-semibold"
+                className="pressable t-button flex min-h-12 items-center justify-center rounded-[8px] border border-hairline bg-surface-1 px-5 hover:border-ink-subtle"
               >
                 <span className="flex items-center gap-2">
                   <Phone aria-hidden size={20} /> Tele-MANAS 14416
@@ -250,11 +250,11 @@ export function SosFlow({
               abandon();
               onExit();
             }}
-            className="min-h-14 w-full rounded-xl border border-border py-3 font-semibold"
+            className="pressable t-button min-h-12 w-full rounded-[8px] border border-hairline py-3 hover:border-ink-subtle"
           >
             I am steadier now
           </button>
-          <p className="text-center text-xs text-muted">
+          <p className="t-caption text-center text-ink-subtle">
             Craving logged at level {cravingLevel} of 5. Your caregiver view will show
             this.
           </p>

@@ -49,34 +49,34 @@ export function DataControls({ state }: { state: AppState }) {
         title="Your data"
         subtitle="All of it lives in this browser. There is no account and no copy on a server."
       />
-      <p className="text-sm text-muted">
+      <p className="text-sm text-ink-muted">
         {counts.map(([label, count]) => `${count} ${label}`).join(" · ")}
       </p>
 
       <div className="mt-4 grid gap-3">
-        <PrimaryButton tone="quiet" onClick={exportData}>
+        <PrimaryButton tone="secondary" onClick={exportData}>
           <span className="flex items-center justify-center gap-2">
             <Download aria-hidden size={18} /> Download everything
           </span>
         </PrimaryButton>
 
         {confirming ? (
-          <div className="rounded-xl border border-danger bg-danger/10 p-4">
+          <div className="rounded-[8px] border border-emergency bg-emergency/[0.07] p-4">
             <p className="text-sm">
               This erases your profile, every check-in, every SOS, and every conversation
               from this device. It cannot be undone.
             </p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              <PrimaryButton tone="danger" onClick={erase}>
+              <PrimaryButton tone="emergency" onClick={erase}>
                 Yes, erase it all
               </PrimaryButton>
-              <PrimaryButton tone="quiet" onClick={() => setConfirming(false)}>
+              <PrimaryButton tone="secondary" onClick={() => setConfirming(false)}>
                 Keep my data
               </PrimaryButton>
             </div>
           </div>
         ) : (
-          <PrimaryButton tone="quiet" onClick={() => setConfirming(true)}>
+          <PrimaryButton tone="secondary" onClick={() => setConfirming(true)}>
             <span className="flex items-center justify-center gap-2">
               <Trash2 aria-hidden size={18} /> Erase everything
             </span>

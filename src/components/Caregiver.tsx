@@ -93,17 +93,17 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             }
           />
           <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="rounded-xl bg-surface-2 p-3">
-              <p className="text-2xl font-black text-danger">{state.sosEvents.length}</p>
-              <p className="text-xs text-muted">SOS moments</p>
+            <div className="rounded-[8px] bg-surface-2 p-3">
+              <p className="text-2xl font-black text-emergency">{state.sosEvents.length}</p>
+              <p className="text-xs text-ink-muted">SOS moments</p>
             </div>
-            <div className="rounded-xl bg-surface-2 p-3">
-              <p className="text-2xl font-black text-accent">{state.checkIns.length}</p>
-              <p className="text-xs text-muted">Check-ins</p>
+            <div className="rounded-[8px] bg-surface-2 p-3">
+              <p className="text-2xl font-black text-fin">{state.checkIns.length}</p>
+              <p className="text-xs text-ink-muted">Check-ins</p>
             </div>
-            <div className="rounded-xl bg-surface-2 p-3">
+            <div className="rounded-[8px] bg-surface-2 p-3">
               <p className="text-2xl font-black text-safe">{state.journal.length}</p>
-              <p className="text-xs text-muted">Triggers mapped</p>
+              <p className="text-xs text-ink-muted">Triggers mapped</p>
             </div>
           </div>
         </Card>
@@ -113,8 +113,8 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             type="button"
             onClick={() => setTab("now")}
             aria-pressed={tab === "now"}
-            className={`min-h-14 rounded-xl border font-semibold ${
-              tab === "now" ? "border-accent bg-accent/10" : "border-border bg-surface-2"
+            className={`min-h-14 rounded-[8px] border font-semibold ${
+              tab === "now" ? "border-ink bg-fin/[0.08]" : "border-hairline bg-surface-2"
             }`}
           >
             Right now
@@ -123,10 +123,10 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             type="button"
             onClick={() => setTab("training")}
             aria-pressed={tab === "training"}
-            className={`min-h-14 rounded-xl border font-semibold ${
+            className={`min-h-14 rounded-[8px] border font-semibold ${
               tab === "training"
-                ? "border-accent bg-accent/10"
-                : "border-border bg-surface-2"
+                ? "border-ink bg-fin/[0.08]"
+                : "border-hairline bg-surface-2"
             }`}
           >
             Family training
@@ -138,7 +138,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             {!linked ? (
               <Card>
                 <h3 className="mb-3 font-bold">What are they using?</h3>
-                <p className="mb-4 text-sm text-muted">
+                <p className="mb-4 text-sm text-ink-muted">
                   Nobody is linked on this device, so tell Zync this much and the training
                   still works. You do not need their permission to learn this.
                 </p>
@@ -162,7 +162,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
           <>
         <Card>
           <h3 className="mb-3 font-bold">What do I say right now?</h3>
-          <p className="mb-4 text-sm text-muted">
+          <p className="mb-4 text-sm text-ink-muted">
             {linked
               ? "Zync reads the pattern in the events below and gives you words — including the ones to hold back."
               : "No one is linked on this device yet. Open the recovery side first, finish the four-tap setup, then come back — Zync needs someone to read before it can advise you."}
@@ -172,7 +172,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
           </PrimaryButton>
           {!linked ? (
             <div className="mt-3">
-              <PrimaryButton tone="quiet" onClick={onExit}>
+              <PrimaryButton tone="secondary" onClick={onExit}>
                 Set up the recovery side
               </PrimaryButton>
             </div>
@@ -197,7 +197,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
                 <h4 className="text-sm font-semibold text-safe">Say this</h4>
                 <ul className="mt-2 grid gap-2">
                   {guidance.say.map((line, index) => (
-                    <li key={index} className="rounded-xl bg-safe/12 p-3 text-base">
+                    <li key={index} className="rounded-[8px] bg-safe/[0.09] p-3 text-base">
                       “{line}”
                     </li>
                   ))}
@@ -206,10 +206,10 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             ) : null}
             {guidance.avoid.length ? (
               <div className="mt-5">
-                <h4 className="text-sm font-semibold text-danger">Hold this back</h4>
+                <h4 className="text-sm font-semibold text-emergency">Hold this back</h4>
                 <ul className="mt-2 grid gap-2">
                   {guidance.avoid.map((line, index) => (
-                    <li key={index} className="rounded-xl bg-danger/12 p-3 text-base">
+                    <li key={index} className="rounded-[8px] bg-emergency/[0.07] p-3 text-base">
                       {line}
                     </li>
                   ))}
@@ -224,23 +224,23 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
           {events.length ? (
             <ul className="grid gap-3">
               {events.slice(0, 12).map((event, index) => (
-                <li key={index} className="rounded-xl bg-surface-2 p-3">
+                <li key={index} className="rounded-[8px] bg-surface-2 p-3">
                   <p className="flex items-center justify-between gap-3 text-sm">
                     <span
                       className={`font-bold ${
-                        event.kind === "sos" ? "text-danger" : "text-accent"
+                        event.kind === "sos" ? "text-emergency" : "text-fin"
                       }`}
                     >
                       {event.kind === "sos" ? "SOS" : "Check-in"}
                     </span>
-                    <span className="text-muted">{timeAgo(event.at)}</span>
+                    <span className="text-ink-muted">{timeAgo(event.at)}</span>
                   </p>
                   <p className="mt-1 text-sm">{event.detail}</p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted">
+            <p className="text-sm text-ink-muted">
               Nothing logged yet on this device. Switch to the recovery view, run an SOS
               or a check-in, then come back — the events appear here.
             </p>
@@ -254,7 +254,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
         <button
           type="button"
           onClick={onExit}
-          className="min-h-14 w-full rounded-xl border border-border py-3 font-semibold"
+          className="min-h-14 w-full rounded-[8px] border border-hairline py-3 font-semibold"
         >
           Back
         </button>

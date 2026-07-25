@@ -1,6 +1,7 @@
 "use client";
 
 import { Helplines } from "@/components/Helplines";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /** The two doors: the person in recovery, and the person holding them up. */
 export function Landing({
@@ -11,13 +12,16 @@ export function Landing({
   onCaregiver: () => void;
 }) {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-10 px-5 py-10 md:flex-row md:items-center">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-10 px-5 py-10 md:flex-row md:items-center">
+      <div className="absolute right-5 top-5">
+        <ThemeToggle compact />
+      </div>
       <div className="md:flex-1">
-        <h1 className="text-6xl font-black tracking-tight md:text-7xl">
-          Zync<span className="text-accent">.</span>
+        <h1 className="t-display">
+          Zync<span className="text-fin">.</span>
         </h1>
-        <p className="mt-3 text-2xl font-semibold text-accent">You are not alone.</p>
-        <p className="mt-6 text-base leading-relaxed">
+        <p className="t-subhead mt-4 text-ink-muted">You are not alone.</p>
+        <p className="t-body-lg mt-6 max-w-md text-ink-muted">
           A companion for the moment the urge hits. One tap reaches help. No forms, no
           typing, no waiting room.
         </p>
@@ -25,14 +29,14 @@ export function Landing({
           <button
             type="button"
             onClick={onRecovering}
-            className="min-h-20 rounded-2xl bg-accent px-6 text-xl font-bold text-[#221503]"
+            className="pressable t-button min-h-[3.5rem] rounded-[8px] bg-ink px-6 text-on-primary"
           >
             I am recovering
           </button>
           <button
             type="button"
             onClick={onCaregiver}
-            className="min-h-20 rounded-2xl border border-border bg-surface px-6 text-xl font-bold"
+            className="pressable t-button min-h-[3.5rem] rounded-[8px] border border-hairline bg-surface-1 px-6 hover:border-ink-subtle"
           >
             I am caring for someone
           </button>

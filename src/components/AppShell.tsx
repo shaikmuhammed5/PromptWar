@@ -12,6 +12,7 @@ import {
   ShieldAlert,
   Wind,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { View } from "@/lib/navigation";
 
 export const TABS: readonly { view: View; Icon: typeof Mic; label: string }[] = [
@@ -50,15 +51,13 @@ export function AppShell({
       <aside className="hidden w-60 shrink-0 md:block">
         <div className="sticky top-6 grid gap-4">
           <div>
-            <p className="text-sm text-muted">{greeting}</p>
-            <h1 className="text-2xl font-black">
-              Zync<span className="text-accent">.</span>
-            </h1>
+            <p className="text-sm text-ink-muted">{greeting}</p>
+            <h1 className="t-card-title">Zync</h1>
           </div>
           <button
             type="button"
             onClick={() => onNavigate("sos")}
-            className="flex min-h-16 items-center justify-center gap-2 rounded-2xl bg-danger font-bold text-white"
+            className="pressable t-button flex min-h-14 items-center justify-center gap-2 rounded-[8px] bg-emergency text-white"
           >
             <ShieldAlert aria-hidden size={22} /> I need help now
           </button>
@@ -69,28 +68,29 @@ export function AppShell({
                 type="button"
                 onClick={() => onNavigate(item.view)}
                 aria-current={view === item.view ? "page" : undefined}
-                className={`flex min-h-12 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold transition ${
+                className={`t-body-sm flex min-h-12 items-center gap-3 rounded-[8px] px-3 text-left font-medium transition ${
                   view === item.view
-                    ? "bg-surface-2 text-foreground"
-                    : "text-muted hover:bg-surface"
+                    ? "bg-surface-2 text-ink"
+                    : "text-ink-muted hover:bg-surface-1"
                 }`}
               >
-                <item.Icon aria-hidden size={18} className="text-accent" />
+                <item.Icon aria-hidden size={18} className="text-fin" />
                 {item.label}
               </button>
             ))}
             <button
               type="button"
               onClick={() => onNavigate("breathe")}
-              className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-muted transition hover:bg-surface"
+              className="t-body-sm flex min-h-12 items-center gap-3 rounded-[8px] px-3 text-left font-medium text-ink-muted transition hover:bg-surface-1"
             >
-              <Wind aria-hidden size={18} className="text-accent" /> Breathe
+              <Wind aria-hidden size={18} /> Breathe
             </button>
+            <ThemeToggle />
           </nav>
           <button
             type="button"
             onClick={() => onNavigate("caregiver")}
-            className="min-h-12 rounded-xl border border-border px-4 text-sm font-semibold"
+            className="pressable t-body-sm min-h-12 rounded-[8px] border border-hairline px-4 font-medium hover:border-ink-subtle"
           >
             Caregiver view
           </button>
@@ -100,18 +100,19 @@ export function AppShell({
       <main className="min-w-0 flex-1">
         <header className="mb-6 flex items-start justify-between gap-4 md:hidden">
           <div>
-            <p className="text-sm text-muted">{greeting}</p>
-            <h1 className="text-2xl font-black">
-              Zync<span className="text-accent">.</span>
-            </h1>
+            <p className="text-sm text-ink-muted">{greeting}</p>
+            <h1 className="t-card-title">Zync</h1>
           </div>
-          <button
-            type="button"
-            onClick={() => onNavigate("caregiver")}
-            className="min-h-12 rounded-xl border border-border px-4 text-sm font-semibold"
-          >
-            Caregiver view
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle compact />
+            <button
+              type="button"
+              onClick={() => onNavigate("caregiver")}
+              className="pressable t-body-sm min-h-12 rounded-[8px] border border-hairline px-4 font-medium hover:border-ink-subtle"
+            >
+              Caregiver view
+            </button>
+          </div>
         </header>
 
         {children}
@@ -121,7 +122,7 @@ export function AppShell({
             <button
               type="button"
               onClick={onBack}
-              className="mt-6 min-h-14 w-full rounded-xl border border-border py-3 font-semibold"
+              className="pressable t-button mt-8 min-h-12 w-full rounded-[8px] border border-hairline py-3 hover:border-ink-subtle"
             >
               Back
             </button>
@@ -130,7 +131,7 @@ export function AppShell({
               type="button"
               onClick={() => onNavigate("sos")}
               aria-label="Emergency help now"
-              className="fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-danger text-white shadow-xl md:hidden"
+              className="pressable fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-emergency text-white md:hidden"
             >
               <ShieldAlert aria-hidden size={28} strokeWidth={2} />
             </button>

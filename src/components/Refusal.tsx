@@ -69,9 +69,9 @@ export function Refusal({ profile }: { profile: Profile }) {
       {data?.scripts.map((script, index) => (
         <Card key={index}>
           <p className="text-xl font-semibold leading-relaxed">“{script.line}”</p>
-          <p className="mt-2 text-sm text-muted">{script.why}</p>
+          <p className="mt-2 text-sm text-ink-muted">{script.why}</p>
           <div className="mt-4">
-            <PrimaryButton tone="quiet" onClick={() => speak(script.line)}>
+            <PrimaryButton tone="secondary" onClick={() => speak(script.line)}>
               <span className="flex items-center justify-center gap-2">
                 <Volume2 aria-hidden size={20} /> Hear it out loud
               </span>

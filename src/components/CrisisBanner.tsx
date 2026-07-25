@@ -26,8 +26,8 @@ export function CrisisBanner({ assessment }: { assessment: CrisisAssessment }) {
   return (
     <div
       role="alert"
-      className={`rounded-2xl border-2 p-5 ${
-        emergency ? "border-danger bg-danger/20" : "border-accent bg-accent/15"
+      className={`rounded-[12px] border-2 p-5 ${
+        emergency ? "border-emergency bg-emergency/[0.12]" : "border-ink bg-fin/[0.1]"
       }`}
     >
       <h2 className="flex items-center gap-2 text-lg font-black">
@@ -46,12 +46,12 @@ export function CrisisBanner({ assessment }: { assessment: CrisisAssessment }) {
           <a
             key={entry.number}
             href={`tel:${entry.number.replace(/[^0-9+]/g, "")}`}
-            className="flex min-h-14 items-center justify-between rounded-xl bg-surface px-4 font-semibold"
+            className="flex min-h-14 items-center justify-between rounded-[8px] bg-surface-1 px-4 font-semibold"
           >
             <span className="flex items-center gap-2">
               <PhoneCall aria-hidden size={18} /> {entry.label}
             </span>
-            <span className="text-accent">{entry.number}</span>
+            <span className="text-fin">{entry.number}</span>
           </a>
         ))}
       </div>

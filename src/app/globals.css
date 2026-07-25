@@ -1,63 +1,243 @@
 @import "tailwindcss";
 
+/**
+ * Zync design system.
+ *
+ * Surface language follows the Intercom system: a warm canvas that is never pure
+ * white, content lifted onto a cleaner surface for hierarchy, hairline borders
+ * instead of drop shadows, charcoal as the system primary.
+ *
+ * Two deliberate departures, both safety rather than taste:
+ *
+ * 1. A dark theme ships, chosen explicitly rather than inherited from the OS.
+ *    Light cream is the default because it is the brand; dark exists because
+ *    this app is opened at 2am mid-craving and a 96%-luminance field at that
+ *    hour is physically hostile. The structural relationships (canvas → lifted
+ *    surface → hairline) are identical in both, so nothing re-learns itself.
+ * 2. Emergency red is not a brand colour and is not charcoal. Red-means-danger
+ *    is a load-bearing convention, and the SOS control is the one element that
+ *    must be found without reading. It is scoped to that control alone.
+ */
+
 :root {
-  --background: #0b1020;
-  --surface: #151c33;
-  --surface-2: #1e2745;
-  --foreground: #eef1f8;
-  --muted: #a3adc9;
-  --accent: #ffb454;
-  --danger: #ff5a5f;
+  color-scheme: light;
+
+  /* Surface */
+  --canvas: #f5f1ec;
+  --surface-1: #ffffff;
+  --surface-2: #ede8e1;
+  --hairline: #d3cec6;
+  --hairline-soft: #e5e0d8;
+
+  /* Text */
+  --ink: #111111;
+  --ink-muted: #626260;
+  --ink-subtle: #7b7b78;
+  --on-primary: #ffffff;
+
+  /* Semantic — scoped, never decorative */
+  --emergency: #c0261d;
+  --emergency-tint: rgba(192, 38, 29, 0.08);
+  --safe: #1a7f4b;
+  --safe-tint: rgba(26, 127, 75, 0.09);
+  --fin: #ff5600;
+  --fin-tint: rgba(255, 86, 0, 0.09);
+  --focus: #0007cb;
+
+  /* Radius — modest, never pill on CTAs */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-xxl: 24px;
+  --r-pill: 9999px;
+
+  /* Motion — critically damped by default, per Apple's house-style guidance */
+  --spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --response: 320ms;
+}
+
+/**
+ * Dark is opt-in, never automatic. The toggle writes data-theme on the root and
+ * the choice persists, so the app never changes character underneath someone
+ * because their phone crossed sunset mid-session.
+ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Warm dark, not neutral — the canvas keeps its cream character at night. */
+  --canvas: #14120f;
+  --surface-1: #1d1a16;
+  --surface-2: #26221c;
+  --hairline: #38322a;
+  --hairline-soft: #2b261f;
+
+  --ink: #f5f1ec;
+  --ink-muted: #a8a29a;
+  --ink-subtle: #8b857c;
+  --on-primary: #14120f;
+
+  --emergency: #ff5a4e;
+  --emergency-tint: rgba(255, 90, 78, 0.14);
   --safe: #4ade80;
-  --border: #2a3459;
+  --safe-tint: rgba(74, 222, 128, 0.13);
+  --fin: #ff7a33;
+  --fin-tint: rgba(255, 122, 51, 0.14);
+  --focus: #8fa2ff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-danger: var(--danger);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-on-primary: var(--on-primary);
+  --color-emergency: var(--emergency);
   --color-safe: var(--safe);
-  --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
+  --color-fin: var(--fin);
+  --font-sans: var(--font-inter);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --radius-xxl: var(--r-xxl);
+}
+
+html {
+  /* Spacing in rem so a raised OS text size scales the layout with the type. */
+  font-size: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Visible focus everywhere — crisis users navigate fast and often by keyboard. */
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 6px;
+/**
+ * Type scale. Tracking is size-specific — large text reads too loose as it
+ * grows, body sits at zero. Display sizes use clamp so the 72px hero lands
+ * near 40px on a phone without a breakpoint.
+ */
+.t-display {
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 500;
 }
 
-@keyframes pulse-sos {
+.t-display-md {
+  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.t-headline {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  font-weight: 500;
+}
+
+.t-card-title {
+  font-size: 1.375rem;
+  line-height: 1.25;
+  letter-spacing: -0.014em;
+  font-weight: 500;
+}
+
+.t-subhead {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+
+.t-body-lg {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
+.t-body {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.t-body-sm {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.t-caption {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.t-button {
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+/* Small text takes slightly positive tracking for legibility. */
+.t-caption,
+.t-body-sm {
+  letter-spacing: 0.005em;
+}
+
+/* Visible focus everywhere — people navigate this app fast, often by keyboard. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/**
+ * Pressed feedback fires on pointer-down rather than release. The moment a tap
+ * waits for release to acknowledge, directness falls off a cliff.
+ */
+.pressable {
+  transition:
+    transform var(--response) var(--spring),
+    background-color 160ms ease,
+    border-color 160ms ease;
+  will-change: transform;
+}
+
+.pressable:active {
+  transform: scale(0.975);
+}
+
+@keyframes pulse-emergency {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.55);
+    box-shadow: 0 0 0 0 var(--emergency-tint);
   }
   50% {
-    box-shadow: 0 0 0 26px rgba(255, 90, 95, 0);
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 .sos-pulse {
-  animation: pulse-sos 2.4s ease-out infinite;
+  animation: pulse-emergency 2.6s ease-out infinite;
 }
 
 @keyframes breathe-scale {
-  0% {
-    transform: scale(0.55);
+  from {
+    transform: scale(0.6);
   }
-  100% {
+  to {
     transform: scale(1);
   }
 }
@@ -66,7 +246,10 @@ body {
   animation: breathe-scale 4s ease-in-out infinite alternate;
 }
 
-/* Respect vestibular sensitivity — motion is decoration, never information. */
+/**
+ * Reduced motion is not "no feedback" — it is gentler feedback. Vestibular
+ * motion goes; the colour and opacity changes that carry meaning stay.
+ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -74,5 +257,19 @@ body {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pressable:active {
+    transform: none;
+  }
+}
+
+/* Near-solid surfaces with defined borders when the user asks for more contrast. */
+@media (prefers-contrast: more) {
+  :root {
+    --hairline: var(--ink-muted);
+    --ink-muted: var(--ink);
+    --ink-subtle: var(--ink);
   }
 }

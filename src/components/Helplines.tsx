@@ -16,7 +16,7 @@ export function Helplines({ compact = false }: { compact?: boolean }) {
           subtitle="Free, confidential, and answered by trained people."
         />
       ) : (
-        <h3 id="helplines-heading" className="mb-2 text-sm font-semibold text-muted">
+        <h3 id="helplines-heading" className="mb-2 text-sm font-semibold text-ink-muted">
           Reach a human now
         </h3>
       )}
@@ -25,23 +25,23 @@ export function Helplines({ compact = false }: { compact?: boolean }) {
           <li key={line.number}>
             <a
               href={`tel:${line.number.replace(/[^0-9+]/g, "")}`}
-              className="block rounded-xl border border-border bg-surface-2 p-4 transition hover:border-accent"
+              className="block rounded-[8px] border border-hairline bg-surface-2 p-4 transition hover:border-ink"
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="font-semibold">{line.name}</span>
-                <span className="text-lg font-bold text-accent">{line.number}</span>
+                <span className="text-lg font-bold text-fin">{line.number}</span>
               </span>
-              <span className="mt-1 block text-sm text-muted">{line.detail}</span>
+              <span className="mt-1 block text-sm text-ink-muted">{line.detail}</span>
             </a>
           </li>
         ))}
       </ul>
       {!compact ? (
         <Card className="mt-4">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-ink-muted">
             Zync is a companion, not a doctor. If someone has stopped breathing, is
             unconscious, or has taken far more than usual, call{" "}
-            <a href="tel:112" className="font-semibold text-danger underline">
+            <a href="tel:112" className="font-semibold text-emergency underline">
               112
             </a>{" "}
             first.

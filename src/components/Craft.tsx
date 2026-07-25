@@ -20,15 +20,15 @@ function List({
   if (!items?.length) return null;
   const tones = {
     neutral: "bg-surface-2",
-    good: "bg-safe/12",
-    bad: "bg-danger/12",
+    good: "bg-safe/[0.09]",
+    bad: "bg-emergency/[0.07]",
   } as const;
   return (
     <div className="mt-5">
-      <h4 className="text-sm font-semibold text-muted">{title}</h4>
+      <h4 className="text-sm font-semibold text-ink-muted">{title}</h4>
       <ul className="mt-2 grid gap-2">
         {items.map((item, index) => (
-          <li key={index} className={`rounded-xl p-3 text-base ${tones[tone]}`}>
+          <li key={index} className={`rounded-[8px] p-3 text-base ${tones[tone]}`}>
             {item}
           </li>
         ))}
@@ -80,17 +80,17 @@ export function Craft({ substance }: { substance: Substance }) {
                 reset();
               }}
               aria-pressed={moduleId === module.id}
-              className={`rounded-2xl border p-4 text-left transition ${
+              className={`rounded-[12px] border p-4 text-left transition ${
                 moduleId === module.id
-                  ? "border-accent bg-accent/10"
-                  : "border-border bg-surface-2 hover:border-accent/60"
+                  ? "border-ink bg-fin/[0.08]"
+                  : "border-hairline bg-surface-2 hover:border-ink-subtle"
               }`}
             >
               <span className="flex items-center gap-2 font-bold">
-                <GraduationCap aria-hidden size={18} className="text-accent" />
+                <GraduationCap aria-hidden size={18} className="text-fin" />
                 {module.title}
               </span>
-              <span className="mt-1 block text-sm text-muted">{module.blurb}</span>
+              <span className="mt-1 block text-sm text-ink-muted">{module.blurb}</span>
             </button>
           ))}
         </div>
@@ -112,7 +112,7 @@ export function Craft({ substance }: { substance: Substance }) {
                   ? "You promised you would stop and you lied to me again…"
                   : "He drinks after work most days. It got worse after he lost the job in March…"
               }
-              className="rounded-xl border border-border bg-surface-2 p-4 text-base"
+              className="rounded-[8px] border border-hairline bg-surface-2 p-4 text-base"
             />
           </label>
           <div className="mt-4">
@@ -138,12 +138,12 @@ export function Craft({ substance }: { substance: Substance }) {
           <h3 className="text-xl font-bold">{result.heading}</h3>
 
           {result.rewrite ? (
-            <div className="mt-4 rounded-xl bg-safe/12 p-4">
+            <div className="mt-4 rounded-[8px] bg-safe/[0.09] p-4">
               <h4 className="text-sm font-semibold text-safe">Say it like this</h4>
               <p className="mt-2 text-lg leading-relaxed">“{result.rewrite}”</p>
             </div>
           ) : null}
-          {result.why ? <p className="mt-3 text-sm text-muted">{result.why}</p> : null}
+          {result.why ? <p className="mt-3 text-sm text-ink-muted">{result.why}</p> : null}
 
           <List title="Triggers to watch" items={result.triggers} />
           <List title="What using does for them" items={result.shortTermPayoff} />
@@ -161,11 +161,11 @@ export function Craft({ substance }: { substance: Substance }) {
           <List title="Avoid these phrasings" items={result.avoid} tone="bad" />
 
           {result.practice ? (
-            <p className="mt-5 rounded-xl bg-surface-2 p-3 text-sm">{result.practice}</p>
+            <p className="mt-5 rounded-[8px] bg-surface-2 p-3 text-sm">{result.practice}</p>
           ) : null}
           {result.nextStep ? (
-            <div className="mt-5 rounded-xl border border-accent/40 bg-accent/10 p-4">
-              <h4 className="text-sm font-semibold text-accent">Start here</h4>
+            <div className="mt-5 rounded-[8px] border border-fin/40 bg-fin/[0.08] p-4">
+              <h4 className="text-sm font-semibold text-fin">Start here</h4>
               <p className="mt-1 text-base">{result.nextStep}</p>
             </div>
           ) : null}
