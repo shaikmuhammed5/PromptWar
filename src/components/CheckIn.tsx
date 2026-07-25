@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Mic, Square } from "lucide-react";
 import { Card, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
 import { isSpeechInputSupported, listen, type Listener } from "@/lib/speech";
 import type { CheckInAnalysis } from "@/lib/schemas";
@@ -122,9 +123,11 @@ export function CheckIn({
               : "border-border bg-surface-2 hover:border-accent"
           }`}
         >
-          <span aria-hidden className="text-5xl">
-            {listening ? "⏹️" : "🎙️"}
-          </span>
+          {listening ? (
+            <Square aria-hidden size={44} strokeWidth={1.75} />
+          ) : (
+            <Mic aria-hidden size={44} strokeWidth={1.75} />
+          )}
           {listening ? "Listening — tap to finish" : "Tap and speak"}
         </button>
 

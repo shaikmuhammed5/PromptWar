@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Camera } from "lucide-react";
 import { Card, ErrorNote, SectionTitle, Spinner } from "@/components/ui";
 import type { JournalAnalysis } from "@/lib/schemas";
 import type { Profile } from "@/lib/types";
@@ -88,9 +89,7 @@ export function Journal({
           subtitle="A street, a room, a shop, a face in a crowd. Zync names what in it pulls at you."
         />
         <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-2 p-6 text-center transition hover:border-accent">
-          <span aria-hidden className="text-5xl">
-            📷
-          </span>
+          <Camera aria-hidden size={44} strokeWidth={1.75} className="text-accent" />
           <span className="font-semibold">Take or choose a photo</span>
           <input
             type="file"

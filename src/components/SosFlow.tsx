@@ -1,19 +1,38 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Phone, PhoneCall, Volume2, Wind } from "lucide-react";
 import { Breathe } from "@/components/Breathe";
 import { Helplines } from "@/components/Helplines";
 import { Card, ErrorNote, PrimaryButton, Spinner } from "@/components/ui";
 import { speak, stopSpeaking } from "@/lib/speech";
 import type { Profile } from "@/lib/types";
 
-const CRAVING_FACES = [
-  { level: 1, face: "🙂", label: "A faint pull" },
-  { level: 2, face: "😕", label: "Nagging at me" },
-  { level: 3, face: "😣", label: "Hard to ignore" },
-  { level: 4, face: "😖", label: "Very strong" },
-  { level: 5, face: "😰", label: "About to use" },
+const CRAVING_LEVELS = [
+  { level: 1, label: "A faint pull", tone: "bg-safe" },
+  { level: 2, label: "Nagging at me", tone: "bg-safe" },
+  { level: 3, label: "Hard to ignore", tone: "bg-accent" },
+  { level: 4, label: "Very strong", tone: "bg-accent" },
+  { level: 5, label: "About to use", tone: "bg-danger" },
 ] as const;
+
+/**
+ * A filling bar, not a face. Severity has to be legible at a glance to someone
+ * whose hands are shaking, and rising bars read faster than emoji expressions.
+ */
+function CravingMeter({ level, tone }: { level: number; tone: string }) {
+  return (
+    <span aria-hidden className="flex items-end gap-1">
+      {[1, 2, 3, 4, 5].map((step) => (
+        <span
+          key={step}
+          className={`w-2.5 rounded-sm ${step <= level ? tone : "bg-border"}`}
+          style={{ height: `${8 + step * 6}px` }}
+        />
+      ))}
+    </span>
+  );
+}
 
 type Stage = "scale" | "script";
 
@@ -123,16 +142,14 @@ export function SosFlow({
             One tap. That is all Zync needs.
           </p>
           <div className="mt-6 grid gap-3">
-            {CRAVING_FACES.map((option) => (
+            {CRAVING_LEVELS.map((option) => (
               <button
                 key={option.level}
                 type="button"
                 onClick={() => requestScript(option.level)}
                 className="flex min-h-20 items-center gap-4 rounded-2xl border border-border bg-surface-2 px-5 text-left transition hover:border-accent"
               >
-                <span aria-hidden className="text-4xl">
-                  {option.face}
-                </span>
+                <CravingMeter level={option.level} tone={option.tone} />
                 <span className="text-lg font-semibold">{option.label}</span>
               </button>
             ))}
@@ -181,7 +198,9 @@ export function SosFlow({
             {script && !streaming ? (
               <div className="mt-5 grid gap-3">
                 <PrimaryButton tone="quiet" onClick={() => speak(script)}>
-                  🔊 Read it to me again
+                  <span className="flex items-center justify-center gap-2">
+                    <Volume2 aria-hidden size={20} /> Read it to me again
+                  </span>
                 </PrimaryButton>
               </div>
             ) : null}
@@ -195,7 +214,10 @@ export function SosFlow({
                   href={`tel:${profile.anchorPhone.replace(/[^0-9+]/g, "")}`}
                   className="flex min-h-14 items-center justify-center rounded-xl bg-safe px-5 font-semibold text-[#05230f]"
                 >
-                  📞 Call {profile.anchorName || "your anchor"}
+                  <span className="flex items-center gap-2">
+                    <PhoneCall aria-hidden size={20} /> Call{" "}
+                    {profile.anchorName || "your anchor"}
+                  </span>
                 </a>
               ) : null}
               <PrimaryButton
@@ -205,13 +227,17 @@ export function SosFlow({
                   setBreathing(true);
                 }}
               >
-                🫁 Breathe with me
+                <span className="flex items-center justify-center gap-2">
+                  <Wind aria-hidden size={20} /> Breathe with me
+                </span>
               </PrimaryButton>
               <a
                 href="tel:14416"
                 className="flex min-h-14 items-center justify-center rounded-xl border border-border bg-surface-2 px-5 font-semibold"
               >
-                ☎️ Tele-MANAS 14416
+                <span className="flex items-center gap-2">
+                  <Phone aria-hidden size={20} /> Tele-MANAS 14416
+                </span>
               </a>
             </div>
           </Card>

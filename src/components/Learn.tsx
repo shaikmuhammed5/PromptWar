@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2 } from "lucide-react";
 import { Card, Chip, ErrorNote, SectionTitle, Spinner } from "@/components/ui";
 import { speak } from "@/lib/speech";
 import { PrimaryButton } from "@/components/ui";
@@ -86,7 +87,9 @@ export function Learn({ profile }: { profile: Profile }) {
             </div>
             <div className="mt-4">
               <PrimaryButton tone="quiet" onClick={() => speak(lesson.body)}>
-                🔊 Read this to me
+                <span className="flex items-center justify-center gap-2">
+                  <Volume2 aria-hidden size={20} /> Read this to me
+                </span>
               </PrimaryButton>
             </div>
           </Card>

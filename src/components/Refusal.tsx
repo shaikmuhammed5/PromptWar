@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2 } from "lucide-react";
 import { Card, Chip, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
 import { speak } from "@/lib/speech";
 import type { RefusalScripts } from "@/lib/schemas";
@@ -81,7 +82,9 @@ export function Refusal({ profile }: { profile: Profile }) {
               <p className="mt-2 text-sm text-muted">{script.why}</p>
               <div className="mt-4">
                 <PrimaryButton tone="quiet" onClick={() => speak(script.line)}>
-                  🔊 Hear it out loud
+                  <span className="flex items-center justify-center gap-2">
+                    <Volume2 aria-hidden size={20} /> Hear it out loud
+                  </span>
                 </PrimaryButton>
               </div>
             </Card>

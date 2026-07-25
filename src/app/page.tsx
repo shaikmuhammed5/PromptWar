@@ -1,6 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  BookOpen,
+  Camera,
+  Mic,
+  MessageSquareQuote,
+  Phone,
+  ShieldAlert,
+  Wind,
+} from "lucide-react";
 import { Breathe } from "@/components/Breathe";
 import { Caregiver } from "@/components/Caregiver";
 import { CheckIn } from "@/components/CheckIn";
@@ -11,43 +21,40 @@ import { Onboarding } from "@/components/Onboarding";
 import { Refusal } from "@/components/Refusal";
 import { SosFlow } from "@/components/SosFlow";
 import { Card } from "@/components/ui";
+import { hrefFor, viewForTool, viewFromParam, type View } from "@/lib/navigation";
 import type { CheckInAnalysis } from "@/lib/schemas";
 import { loadState, newId, saveState } from "@/lib/store";
 import { EMPTY_STATE, STREAK_LABELS, type AppState, type Profile } from "@/lib/types";
 
-type View =
-  | "landing"
-  | "onboarding"
-  | "home"
-  | "sos"
-  | "checkin"
-  | "refusal"
-  | "journal"
-  | "learn"
-  | "helplines"
-  | "breathe"
-  | "caregiver";
-
-const TABS: readonly { view: View; icon: string; label: string }[] = [
-  { view: "checkin", icon: "🎙️", label: "Check in" },
-  { view: "refusal", icon: "🗣️", label: "Say no" },
-  { view: "journal", icon: "📷", label: "Triggers" },
-  { view: "learn", icon: "📚", label: "Learn" },
-  { view: "helplines", icon: "☎️", label: "Helplines" },
+const TABS: readonly { view: View; Icon: typeof Mic; label: string }[] = [
+  { view: "checkin", Icon: Mic, label: "Check in" },
+  { view: "refusal", Icon: MessageSquareQuote, label: "Say no" },
+  { view: "journal", Icon: Camera, label: "Triggers" },
+  { view: "learn", Icon: BookOpen, label: "Learn" },
+  { view: "helplines", Icon: Phone, label: "Helplines" },
 ];
 
-export default function Page() {
+function ZyncApp() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const view = viewFromParam(params.get("v"));
+
   const [state, setState] = useState<AppState>(EMPTY_STATE);
-  const [view, setView] = useState<View>("landing");
   const [hydrated, setHydrated] = useState(false);
 
   // Local-first: state lives in the browser, so it loads after mount.
   useEffect(() => {
-    const stored = loadState();
-    setState(stored);
-    setView(stored.profile ? "home" : "landing");
+    setState(loadState());
     setHydrated(true);
   }, []);
+
+  /** Every move is real history, so back and swipe-back step through screens. */
+  const go = useCallback(
+    (next: View) => {
+      router.push(hrefFor(next));
+    },
+    [router],
+  );
 
   /**
    * Functional, never value-based. Two AI calls can be in flight at once (start
@@ -68,9 +75,9 @@ export default function Page() {
   const handleOnboarded = useCallback(
     (created: Profile) => {
       update((previous) => ({ ...previous, profile: created }));
-      setView("home");
+      go("home");
     },
-    [update],
+    [update, go],
   );
 
   const handleSosLogged = useCallback(
@@ -127,19 +134,6 @@ export default function Page() {
     [update],
   );
 
-  const openTool = useCallback((tool: string) => {
-    const routes: Readonly<Record<string, View>> = {
-      sos: "sos",
-      breathe: "breathe",
-      helpline: "helplines",
-      "call-anchor": "helplines",
-      journal: "journal",
-      refusal: "refusal",
-      learn: "learn",
-    };
-    setView(routes[tool] ?? "home");
-  }, []);
-
   const lastCheckIn = useMemo(() => state.checkIns[0], [state.checkIns]);
 
   if (!hydrated) {
@@ -164,14 +158,14 @@ export default function Page() {
         <div className="mt-10 grid gap-4">
           <button
             type="button"
-            onClick={() => setView(profile ? "home" : "onboarding")}
+            onClick={() => go(profile ? "home" : "onboarding")}
             className="min-h-20 rounded-2xl bg-accent px-6 text-xl font-bold text-[#221503]"
           >
             I am recovering
           </button>
           <button
             type="button"
-            onClick={() => setView("caregiver")}
+            onClick={() => go("caregiver")}
             className="min-h-20 rounded-2xl border border-border bg-surface px-6 text-xl font-bold"
           >
             I am caring for someone
@@ -189,9 +183,7 @@ export default function Page() {
   }
 
   if (view === "caregiver") {
-    return (
-      <Caregiver state={state} onExit={() => setView(profile ? "home" : "landing")} />
-    );
+    return <Caregiver state={state} onExit={() => go(profile ? "home" : "landing")} />;
   }
 
   if (!profile) {
@@ -200,18 +192,14 @@ export default function Page() {
 
   if (view === "sos") {
     return (
-      <SosFlow
-        profile={profile}
-        onLogged={handleSosLogged}
-        onExit={() => setView("home")}
-      />
+      <SosFlow profile={profile} onLogged={handleSosLogged} onExit={() => go("home")} />
     );
   }
 
   if (view === "breathe") {
     return (
       <main className="mx-auto w-full max-w-lg px-5 py-8">
-        <Breathe onClose={() => setView("home")} />
+        <Breathe onClose={() => go("home")} />
       </main>
     );
   }
@@ -229,7 +217,7 @@ export default function Page() {
         </div>
         <button
           type="button"
-          onClick={() => setView("caregiver")}
+          onClick={() => go("caregiver")}
           className="min-h-12 rounded-xl border border-border px-4 text-sm font-semibold"
         >
           Caregiver view
@@ -240,12 +228,10 @@ export default function Page() {
         <div className="grid gap-5">
           <button
             type="button"
-            onClick={() => setView("sos")}
-            className="sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-2 rounded-3xl bg-danger text-white"
+            onClick={() => go("sos")}
+            className="sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-3 rounded-3xl bg-danger text-white"
           >
-            <span aria-hidden className="text-6xl">
-              🆘
-            </span>
+            <ShieldAlert aria-hidden size={56} strokeWidth={1.75} />
             <span className="text-3xl font-black">I need help now</span>
             <span className="text-sm opacity-90">One tap. No typing.</span>
           </button>
@@ -273,23 +259,24 @@ export default function Page() {
               <button
                 key={tab.view}
                 type="button"
-                onClick={() => setView(tab.view)}
-                className="flex min-h-24 flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-surface transition hover:border-accent"
+                onClick={() => go(tab.view)}
+                className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-surface transition hover:border-accent"
               >
-                <span aria-hidden className="text-3xl">
-                  {tab.icon}
-                </span>
+                <tab.Icon
+                  aria-hidden
+                  size={26}
+                  strokeWidth={1.75}
+                  className="text-accent"
+                />
                 <span className="text-sm font-semibold">{tab.label}</span>
               </button>
             ))}
             <button
               type="button"
-              onClick={() => setView("breathe")}
-              className="flex min-h-24 flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-surface transition hover:border-accent"
+              onClick={() => go("breathe")}
+              className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-surface transition hover:border-accent"
             >
-              <span aria-hidden className="text-3xl">
-                🫁
-              </span>
+              <Wind aria-hidden size={26} strokeWidth={1.75} className="text-accent" />
               <span className="text-sm font-semibold">Breathe</span>
             </button>
           </div>
@@ -297,7 +284,11 @@ export default function Page() {
       ) : null}
 
       {view === "checkin" ? (
-        <CheckIn profile={profile} onAnalysed={handleCheckIn} onOpenTool={openTool} />
+        <CheckIn
+          profile={profile}
+          onAnalysed={handleCheckIn}
+          onOpenTool={(tool) => go(viewForTool(tool))}
+        />
       ) : null}
       {view === "refusal" ? <Refusal profile={profile} /> : null}
       {view === "journal" ? (
@@ -310,22 +301,37 @@ export default function Page() {
         <>
           <button
             type="button"
-            onClick={() => setView("home")}
+            onClick={() => router.back()}
             className="mt-6 min-h-14 w-full rounded-xl border border-border py-3 font-semibold"
           >
-            Back home
+            Back
           </button>
           {/* SOS stays one tap away from every screen. */}
           <button
             type="button"
-            onClick={() => setView("sos")}
+            onClick={() => go("sos")}
             aria-label="Emergency help now"
-            className="fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-danger text-2xl font-black text-white shadow-xl"
+            className="fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-danger text-white shadow-xl"
           >
-            🆘
+            <ShieldAlert aria-hidden size={28} strokeWidth={2} />
           </button>
         </>
       ) : null}
     </main>
+  );
+}
+
+export default function Page() {
+  // useSearchParams needs a Suspense boundary to keep the shell statically rendered.
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center px-5">
+          <p className="text-muted">Loading Zync…</p>
+        </main>
+      }
+    >
+      <ZyncApp />
+    </Suspense>
   );
 }
