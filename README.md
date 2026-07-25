@@ -12,6 +12,9 @@ anchor is the human it puts you back in touch with.
 
 Built for **Build with AI: PromptWars** — Recovery and Prevention Platform challenge.
 
+📋 **[FEATURES.md](FEATURES.md)** — full feature sheet and Gen AI services declaration
+🚶 **[FLOW.md](FLOW.md)** — walk the app exactly as an evaluator would
+
 **No login. No demo credentials needed. Every feature is reachable in one tap from the landing page.**
 
 ---
@@ -96,7 +99,8 @@ GEMINI_API_KEY=your_key_here
 Get a free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 
 ```bash
-npm test          # unit tests
+npm run lint      # ESLint (next/core-web-vitals + typescript)
+npm test          # 108 tests
 npm run build     # production build
 ```
 
@@ -140,9 +144,20 @@ One codebase, two layouts. Mobile is the primary target — single column, thumb
 npm test
 ```
 
-Vitest covers the pure logic worth protecting: prompt builders (profile context, safety framing,
-craving-level wording), the model-output JSON extractor against fenced and prose-wrapped responses,
-rate-limit window behaviour, and every Zod boundary schema.
+108 tests across three levels.
+
+**Route level**, with the model mocked — the contract *around* the model: bad input is rejected before
+a paid call is made, a missing key degrades to a handled 503, upstream failure detail never reaches the
+client, an empty stream fails cleanly rather than returning half a script, and the limiter limits per
+client rather than globally.
+
+**Unit level** — prompt builders, the JSON extractor against fenced and prose-wrapped output, the
+model-fallback classifier, crisis detection (including the phrasings people actually use), the TTL
+cache, the external store's concurrent-write behaviour, speech error mapping, and every Zod schema.
+
+**Regression guards** — each one pins a bug that actually shipped: the breathing cycle never showing a
+zero, concurrent writes composing instead of overwriting, and "cutting myself" being caught by the
+self-harm patterns.
 
 ## Tech
 
