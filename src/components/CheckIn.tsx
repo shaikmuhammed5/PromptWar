@@ -146,7 +146,10 @@ export function CheckIn({
               placeholder="Today was rough…"
               className="rounded-xl border border-border bg-surface-2 p-4 text-base"
             />
-            <PrimaryButton onClick={() => void analyse(transcript)}>
+            <PrimaryButton
+              onClick={() => void analyse(transcript)}
+              disabled={analysing || !transcript.trim()}
+            >
               Analyse this
             </PrimaryButton>
           </div>

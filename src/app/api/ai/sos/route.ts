@@ -23,13 +23,12 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const hour = new Date().getHours();
   const encoder = new TextEncoder();
 
   try {
     const tokens = generateTextStream({
       system: SOS_SYSTEM,
-      prompt: sosPrompt(input.profile, input.cravingLevel, hour),
+      prompt: sosPrompt(input.profile, input.cravingLevel, input.hour),
     });
 
     // Pull the first token before responding so an upstream failure still maps

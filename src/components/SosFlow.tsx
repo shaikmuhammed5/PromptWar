@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Breathe } from "@/components/Breathe";
 import { Helplines } from "@/components/Helplines";
 import { Card, ErrorNote, PrimaryButton, Spinner } from "@/components/ui";
@@ -37,9 +37,15 @@ export function SosFlow({
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState("");
   const [breathing, setBreathing] = useState(false);
-  const spokenRef = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  useEffect(() => () => stopSpeaking(), []);
+  /** Leaving the flow must also silence it — TTS outliving the screen is jarring. */
+  const abandon = useCallback(() => {
+    abortRef.current?.abort();
+    stopSpeaking();
+  }, []);
+
+  useEffect(() => abandon, [abandon]);
 
   async function requestScript(level: number) {
     setCravingLevel(level);
@@ -47,13 +53,22 @@ export function SosFlow({
     setStreaming(true);
     setError("");
     setScript("");
-    spokenRef.current = false;
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const response = await fetch("/api/ai/sos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, cravingLevel: level }),
+        signal: controller.signal,
+        body: JSON.stringify({
+          profile,
+          cravingLevel: level,
+          // The script references time of day, so it must be the user's clock.
+          hour: new Date().getHours(),
+        }),
       });
 
       if (!response.ok || !response.body) {
@@ -73,20 +88,21 @@ export function SosFlow({
         setScript(full);
       }
 
+      // Abandoned mid-stream: log nothing, and above all do not start talking.
+      if (controller.signal.aborted) return;
+
       // Speak once the full script exists, so the voice is not chopped mid-word.
-      if (!spokenRef.current && full.trim()) {
-        spokenRef.current = true;
-        speak(full);
-      }
+      if (full.trim()) speak(full);
       onLogged(level, full);
     } catch (caught) {
+      if (controller.signal.aborted) return;
       setError(
         caught instanceof Error
           ? caught.message
           : "Could not reach the AI service just now.",
       );
     } finally {
-      setStreaming(false);
+      if (!controller.signal.aborted) setStreaming(false);
     }
   }
 
@@ -123,7 +139,10 @@ export function SosFlow({
           </div>
           <button
             type="button"
-            onClick={onExit}
+            onClick={() => {
+              abandon();
+              onExit();
+            }}
             className="mt-6 min-h-12 w-full text-sm text-muted underline"
           >
             Go back
@@ -179,7 +198,13 @@ export function SosFlow({
                   📞 Call {profile.thunaiName || "your Thunai"}
                 </a>
               ) : null}
-              <PrimaryButton tone="quiet" onClick={() => setBreathing(true)}>
+              <PrimaryButton
+                tone="quiet"
+                onClick={() => {
+                  abandon();
+                  setBreathing(true);
+                }}
+              >
                 🫁 Breathe with me
               </PrimaryButton>
               <a
@@ -196,7 +221,7 @@ export function SosFlow({
           <button
             type="button"
             onClick={() => {
-              stopSpeaking();
+              abandon();
               onExit();
             }}
             className="min-h-14 w-full rounded-xl border border-border py-3 font-semibold"

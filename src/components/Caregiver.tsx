@@ -34,9 +34,15 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
     ...state.checkIns.map((checkIn) => ({
       kind: "checkin" as const,
       at: checkIn.at,
-      detail: `Mood ${checkIn.mood}, risk ${checkIn.riskScore}/10 — ${checkIn.summary}`,
+      // Trimmed to the server's cap so a long AI summary cannot 400 the request.
+      detail: `Mood ${checkIn.mood}, risk ${checkIn.riskScore}/10 — ${checkIn.summary}`.slice(
+        0,
+        400,
+      ),
     })),
   ].sort((a, b) => b.at - a.at);
+
+  const linked = state.profile !== null;
 
   async function askGemini() {
     if (!state.profile) return;
@@ -95,12 +101,20 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
         <Card>
           <h3 className="mb-3 font-bold">What do I say right now?</h3>
           <p className="mb-4 text-sm text-muted">
-            Zync reads the pattern in the events below and gives you words — including
-            the ones to hold back.
+            {linked
+              ? "Zync reads the pattern in the events below and gives you words — including the ones to hold back."
+              : "No one is linked on this device yet. Open the recovery side first, finish the four-tap setup, then come back — Zync needs someone to read before it can advise you."}
           </p>
-          <PrimaryButton onClick={() => void askGemini()} disabled={loading}>
-            {loading ? "Thinking…" : "Ask Zync"}
+          <PrimaryButton onClick={() => void askGemini()} disabled={loading || !linked}>
+            {loading ? "Thinking…" : linked ? "Ask Zync" : "Nobody linked yet"}
           </PrimaryButton>
+          {!linked ? (
+            <div className="mt-3">
+              <PrimaryButton tone="quiet" onClick={onExit}>
+                Set up the recovery side
+              </PrimaryButton>
+            </div>
+          ) : null}
           {loading ? (
             <div className="mt-4">
               <Spinner label="Reading the last few days…" />

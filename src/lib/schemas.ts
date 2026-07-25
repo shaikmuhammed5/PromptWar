@@ -23,6 +23,8 @@ export const profileSchema = z.object({
 export const sosRequestSchema = z.object({
   profile: profileSchema,
   cravingLevel: z.number().int().min(1).max(5),
+  /** The user's local hour — the server's clock is the wrong one to reason from. */
+  hour: z.number().int().min(0).max(23).default(new Date().getHours()),
 });
 
 export const checkInRequestSchema = z.object({
@@ -67,7 +69,18 @@ export const checkInAnalysisSchema = z.object({
   riskScore: z.number().min(0).max(10),
   summary: z.string().max(400),
   triggersDetected: z.array(z.string().max(60)).max(8).default([]),
-  toolsRecommended: z.array(z.string().max(60)).max(6).default([]),
+  /**
+   * Constrained to ids the UI can actually route. An unknown value would render
+   * a button that silently dumps the user on the home screen, so it is dropped.
+   */
+  toolsRecommended: z
+    .array(
+      z
+        .enum(["sos", "breathe", "call-thunai", "helpline", "journal", "refusal", "learn"])
+        .catch("breathe"),
+    )
+    .max(6)
+    .default([]),
 });
 
 export const refusalScriptsSchema = z.object({

@@ -49,38 +49,47 @@ export default function Page() {
     setHydrated(true);
   }, []);
 
-  const update = useCallback((next: AppState) => {
-    setState(next);
-    saveState(next);
+  /**
+   * Functional, never value-based. Two AI calls can be in flight at once (start
+   * a check-in, hit the SOS button while it streams) and a snapshot-based
+   * update would let the second write erase the first.
+   */
+  const update = useCallback((mutate: (previous: AppState) => AppState) => {
+    setState(mutate);
   }, []);
+
+  // Persist whatever the reducer settled on, not what a closure remembered.
+  useEffect(() => {
+    if (hydrated) saveState(state);
+  }, [state, hydrated]);
 
   const profile = state.profile;
 
   const handleOnboarded = useCallback(
     (created: Profile) => {
-      update({ ...state, profile: created });
+      update((previous) => ({ ...previous, profile: created }));
       setView("home");
     },
-    [state, update],
+    [update],
   );
 
   const handleSosLogged = useCallback(
     (cravingLevel: number, script: string) => {
-      update({
-        ...state,
+      update((previous) => ({
+        ...previous,
         sosEvents: [
           { id: newId(), at: Date.now(), cravingLevel, script },
-          ...state.sosEvents,
+          ...previous.sosEvents,
         ],
-      });
+      }));
     },
-    [state, update],
+    [update],
   );
 
   const handleCheckIn = useCallback(
     (transcript: string, analysis: CheckInAnalysis) => {
-      update({
-        ...state,
+      update((previous) => ({
+        ...previous,
         checkIns: [
           {
             id: newId(),
@@ -92,25 +101,30 @@ export default function Page() {
             triggersDetected: analysis.triggersDetected,
             toolsRecommended: analysis.toolsRecommended,
           },
-          ...state.checkIns,
+          ...previous.checkIns,
         ],
-      });
+      }));
     },
-    [state, update],
+    [update],
   );
 
   /** Vision findings feed straight back into the profile that writes SOS scripts. */
   const handleTriggersFound = useCallback(
     (triggers: readonly string[], advice: string) => {
-      if (!state.profile) return;
-      const merged = Array.from(new Set([...state.profile.triggers, ...triggers]));
-      update({
-        ...state,
-        profile: { ...state.profile, triggers: merged },
-        journal: [{ id: newId(), at: Date.now(), triggers, advice }, ...state.journal],
+      update((previous) => {
+        if (!previous.profile) return previous;
+        const merged = Array.from(new Set([...previous.profile.triggers, ...triggers]));
+        return {
+          ...previous,
+          profile: { ...previous.profile, triggers: merged },
+          journal: [
+            { id: newId(), at: Date.now(), triggers, advice },
+            ...previous.journal,
+          ],
+        };
       });
     },
-    [state, update],
+    [update],
   );
 
   const openTool = useCallback((tool: string) => {

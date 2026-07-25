@@ -42,13 +42,15 @@ export function sosPrompt(profile: Profile, cravingLevel: number, hour: number):
 Right now the urge is: ${CRAVING_WORDS[cravingLevel] ?? "strong"} (${cravingLevel} of 5).
 Local time: ${hour}:00.
 
-Write a de-escalation script they can follow RIGHT NOW while the urge is peaking.
-Format exactly like this, nothing else:
-- Open with one line naming what is happening to them, without judgement.
-- Then 4 to 6 numbered steps. Each step is ONE physical action they can do in the next 60 seconds, in their current surroundings.
-- Reference their specific triggers and the time of day where it genuinely helps.
-- End with one line reminding them what they are protecting by not using, tied to their streak.
-Keep the whole thing under 180 words. This will be read aloud to them, so write it to be heard, not skimmed.`;
+Speak directly to them now, while the urge is peaking.
+
+Begin with a single sentence naming what is happening in their body, without judgement.
+Then give 4 to 6 numbered steps. Each step is one physical action they can take in the next
+sixty seconds, wherever they are standing. Work in their own triggers and the hour above
+wherever it genuinely helps. Close with one sentence on what their streak is protecting.
+
+Under 180 words. Every word will be read aloud to them, so write it to be heard.
+Output only the script itself — never restate these instructions.`;
 }
 
 export const SOS_SYSTEM = `${SAFETY}
