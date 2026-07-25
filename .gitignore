@@ -41,7 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 # ...but the key contract itself should be in the repo
-!.env.example
 
 .vercel
 .env*
+
+# Negation must come last: Vercel appends its own .env* rule on `vercel link`.
+!.env.example
