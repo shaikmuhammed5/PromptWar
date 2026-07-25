@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { stageInstruction } from "@/lib/ai/prompts";
 import { resetLimiter } from "@/lib/rate-limit";
 
 /**
@@ -112,7 +113,7 @@ describe("companion chat", () => {
     await chat(post(chatBody({ userTurns: 25 })));
 
     const system = generateChatStream.mock.calls[0][0].system as string;
-    expect(system).toMatch(/session is ending now/i);
+    expect(system).toContain(stageInstruction("closing"));
   });
 
   test("an ordinary session gets no wind-down instruction", async () => {
@@ -125,7 +126,8 @@ describe("companion chat", () => {
     await chat(post(chatBody({ userTurns: 2 })));
 
     const system = generateChatStream.mock.calls[0][0].system as string;
-    expect(system).not.toMatch(/session is ending now/i);
+    expect(system).not.toContain(stageInstruction("closing"));
+    expect(system).not.toContain(stageInstruction("wrapping"));
   });
 
   test("roleplay mode carries the two-push limit into the prompt", async () => {

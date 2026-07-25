@@ -326,9 +326,13 @@ Output only the words you are saying to them. Never restate, number, or summaris
 instructions.`;
 
 /** Stage is enforced by a turn counter in code; the prompt is told which one applies. */
-type ChatStage = "open" | "wrapping" | "closing";
+export type ChatStage = "open" | "wrapping" | "closing";
 
-function stageInstruction(stage: ChatStage): string {
+/**
+ * Exported so tests can assert the route selected the right stage without
+ * pinning the exact wording — the copy is tuned often, the behaviour is not.
+ */
+export function stageInstruction(stage: ChatStage): string {
   if (stage === "wrapping") {
     return `This conversation has been going a while, so begin drawing it gently to a close in
 your next few replies. Do not open new threads. Somewhere in here, point them toward a person

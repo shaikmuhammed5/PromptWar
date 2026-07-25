@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { caregiverPrompt, checkInPrompt, profileContext, sosPrompt } from "./prompts";
+import {
+  caregiverPrompt,
+  checkInPrompt,
+  profileContext,
+  sosPrompt,
+  stageInstruction,
+} from "./prompts";
 import type { Profile } from "@/lib/types";
 
 const profile: Profile = {
@@ -91,5 +97,36 @@ describe("caregiverPrompt", () => {
 
     expect(prompt).toContain("No events logged yet");
     expect(prompt).toContain("their loved one");
+  });
+});
+
+describe("stageInstruction — the dependency guardrail's wording", () => {
+  test("says nothing extra during an ordinary session", () => {
+    expect(stageInstruction("open")).toBe("");
+  });
+
+  test("asks the model to wind down once wrapping", () => {
+    const instruction = stageInstruction("wrapping");
+
+    expect(instruction).toMatch(/close/i);
+    expect(instruction).toMatch(/person|screen/i);
+  });
+
+  test("closes by handing the user to a human, and asks nothing back", () => {
+    const instruction = stageInstruction("closing");
+
+    expect(instruction).toMatch(/last reply/i);
+    expect(instruction).toMatch(/talking to\s+a person/i);
+    expect(instruction).toMatch(/ask them nothing/i);
+  });
+
+  test("the three stages are genuinely different instructions", () => {
+    const all = new Set([
+      stageInstruction("open"),
+      stageInstruction("wrapping"),
+      stageInstruction("closing"),
+    ]);
+
+    expect(all.size).toBe(3);
   });
 });
