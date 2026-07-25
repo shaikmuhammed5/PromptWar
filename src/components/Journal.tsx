@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Camera } from "lucide-react";
 import { Card, ErrorNote, SectionTitle, Spinner } from "@/components/ui";
+import { useAiRequest } from "@/lib/use-ai-request";
 import type { JournalAnalysis } from "@/lib/schemas";
 import type { Profile } from "@/lib/types";
 
@@ -41,45 +42,47 @@ export function Journal({
   onTriggersFound: (triggers: readonly string[], advice: string) => void;
 }) {
   const [preview, setPreview] = useState("");
-  const [analysis, setAnalysis] = useState<JournalAnalysis | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
+  const {
+    data: analysis,
+    loading,
+    error,
+    run,
+  } = useAiRequest<JournalAnalysis>(
+    "/api/ai/journal",
+    "Could not read that photo just now.",
+  );
+
+  // Object URLs would leak; the preview is a data URL, but clear it on unmount.
+  useEffect(() => () => setPreview(""), []);
 
   async function handleFile(file: File | undefined) {
     if (!file) return;
+    setLocalError("");
+
     if (!isAllowed(file.type)) {
-      setError("Use a JPG, PNG, or WebP photo.");
+      setLocalError("Use a JPG, PNG, or WebP photo.");
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("That photo is too large. Try one under 4MB.");
+      setLocalError("That photo is too large. Try one under 4MB.");
       return;
     }
 
-    setLoading(true);
-    setError("");
-    setAnalysis(null);
+    let imageBase64: string;
     try {
-      const imageBase64 = await readAsBase64(file);
-      setPreview(`data:${file.type};base64,${imageBase64}`);
-      const response = await fetch("/api/ai/journal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, mimeType: file.type, imageBase64 }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body?.error ?? "Could not read that photo.");
-      const result = body as JournalAnalysis;
-      setAnalysis(result);
-      onTriggersFound(result.triggers, result.advice);
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "Could not read that photo now.",
-      );
-    } finally {
-      setLoading(false);
+      imageBase64 = await readAsBase64(file);
+    } catch {
+      setLocalError("Could not read that image file.");
+      return;
     }
+
+    setPreview(`data:${file.type};base64,${imageBase64}`);
+    const result = await run({ profile, mimeType: file.type, imageBase64 });
+    if (result) onTriggersFound(result.triggers, result.advice);
   }
+
+  const shown = localError || error;
 
   return (
     <section className="grid gap-5">
@@ -115,9 +118,9 @@ export function Journal({
             <Spinner label="Zync is looking…" />
           </div>
         ) : null}
-        {error ? (
+        {shown ? (
           <div className="mt-4">
-            <ErrorNote message={error} />
+            <ErrorNote message={shown} />
           </div>
         ) : null}
       </Card>

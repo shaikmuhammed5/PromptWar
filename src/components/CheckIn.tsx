@@ -5,7 +5,8 @@ import { Mic, Square } from "lucide-react";
 import { CrisisBanner } from "@/components/CrisisBanner";
 import { assessCrisis, escalateForRisk, type CrisisAssessment } from "@/lib/crisis";
 import { Card, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
-import { isSpeechInputSupported, listen, type Listener } from "@/lib/speech";
+import { listen, type Listener } from "@/lib/speech";
+import { useAiRequest } from "@/lib/use-ai-request";
 import type { CheckInAnalysis } from "@/lib/schemas";
 import type { Profile } from "@/lib/types";
 
@@ -42,21 +43,22 @@ export function CheckIn({
 }) {
   const [transcript, setTranscript] = useState("");
   const [listening, setListening] = useState(false);
-  const [analysing, setAnalysing] = useState(false);
-  const [analysis, setAnalysis] = useState<CheckInAnalysis | null>(null);
+  const {
+    data: analysis,
+    loading: analysing,
+    error: aiError,
+    run,
+    reset,
+  } = useAiRequest<CheckInAnalysis>("/api/ai/checkin", "Could not analyse that just now.");
   const [crisis, setCrisis] = useState<CrisisAssessment>({ level: "none", reason: "" });
-  const [error, setError] = useState("");
+  const [speechError, setSpeechError] = useState("");
   const listenerRef = useRef<Listener | null>(null);
-  const [speechSupported, setSpeechSupported] = useState(true);
 
-  useEffect(() => {
-    setSpeechSupported(isSpeechInputSupported());
-    return () => listenerRef.current?.stop();
-  }, []);
+  useEffect(() => () => listenerRef.current?.stop(), []);
 
   function startListening() {
-    setError("");
-    setAnalysis(null);
+    setSpeechError("");
+    reset();
     setCrisis({ level: "none", reason: "" });
     setTranscript("");
     setListening(true);
@@ -68,7 +70,7 @@ export function CheckIn({
         void analyse(text);
       },
       onError: (message) => {
-        setError(message);
+        setSpeechError(message);
         setListening(false);
       },
     });
@@ -82,35 +84,22 @@ export function CheckIn({
   async function analyse(text: string) {
     const trimmed = text.trim();
     if (!trimmed) {
-      setError("Nothing was captured. Try again, or type it instead.");
+      setSpeechError("Nothing was captured. Try again, or write it instead.");
       return;
     }
-    // Deterministic first: this must fire even if the model call never lands.
-    const detected = assessCrisis(trimmed);
-    setCrisis(detected);
 
-    setAnalysing(true);
-    setError("");
-    try {
-      const response = await fetch("/api/ai/checkin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, transcript: trimmed }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body?.error ?? "Analysis failed.");
-      const result = body as CheckInAnalysis;
-      setAnalysis(result);
-      setCrisis((current) => escalateForRisk(current, result.riskScore));
-      onAnalysed(trimmed, result);
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "Could not analyse that just now.",
-      );
-    } finally {
-      setAnalysing(false);
-    }
+    // Deterministic first: this must fire even if the model call never lands.
+    setSpeechError("");
+    setCrisis(assessCrisis(trimmed));
+
+    const result = await run({ profile, transcript: trimmed });
+    if (!result) return;
+
+    setCrisis((current) => escalateForRisk(current, result.riskScore));
+    onAnalysed(trimmed, result);
   }
+
+  const error = speechError || aiError;
 
   const tone = analysis ? riskTone(analysis.riskScore) : null;
 
@@ -151,9 +140,7 @@ export function CheckIn({
         */}
         <div className="mt-4 grid gap-3">
           <label className="grid gap-2 text-sm text-muted">
-            {speechSupported
-              ? "Or write it — same analysis either way. Speaking fills this in."
-              : "This browser cannot listen. Write it instead — same analysis."}
+            Or write it — same analysis either way. Speaking fills this in.
             <textarea
               value={transcript}
               onChange={(event) => setTranscript(event.target.value)}

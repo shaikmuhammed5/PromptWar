@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import { Volume2 } from "lucide-react";
-import { Card, Chip, ErrorNote, SectionTitle, Spinner } from "@/components/ui";
+import {
+  Card,
+  Chip,
+  ErrorNote,
+  PrimaryButton,
+  SectionTitle,
+  Spinner,
+} from "@/components/ui";
 import { speak } from "@/lib/speech";
-import { PrimaryButton } from "@/components/ui";
+import { useAiRequest } from "@/lib/use-ai-request";
 import type { Lesson } from "@/lib/schemas";
 import type { Profile } from "@/lib/types";
 
@@ -20,33 +27,18 @@ const TOPICS: readonly string[] = [
 /** Lessons are generated per person and stage, not served from a content table. */
 export function Learn({ profile }: { profile: Profile }) {
   const [topic, setTopic] = useState("");
-  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [answers, setAnswers] = useState<Readonly<Record<number, number>>>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    data: lesson,
+    loading,
+    error,
+    run,
+  } = useAiRequest<Lesson>("/api/ai/learn", "Could not write the lesson just now.");
 
-  async function load(chosen: string) {
+  function load(chosen: string) {
     setTopic(chosen);
-    setLoading(true);
-    setError("");
-    setLesson(null);
     setAnswers({});
-    try {
-      const response = await fetch("/api/ai/learn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, topic: chosen }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body?.error ?? "Could not write the lesson.");
-      setLesson(body as Lesson);
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "Could not write the lesson now.",
-      );
-    } finally {
-      setLoading(false);
-    }
+    void run({ profile, topic: chosen });
   }
 
   return (
@@ -56,13 +48,13 @@ export function Learn({ profile }: { profile: Profile }) {
           title="Understand what is happening to you"
           subtitle="Written for your substance and your stage, not copied from a pamphlet."
         />
-        <div className="grid gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {TOPICS.map((option) => (
             <Chip
               key={option}
               label={option}
               selected={topic === option}
-              onClick={() => void load(option)}
+              onClick={() => load(option)}
             />
           ))}
         </div>

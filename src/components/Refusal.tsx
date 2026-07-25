@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import { Volume2 } from "lucide-react";
-import { Card, Chip, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
+import {
+  Card,
+  Chip,
+  ErrorNote,
+  PrimaryButton,
+  SectionTitle,
+  Spinner,
+} from "@/components/ui";
 import { speak } from "@/lib/speech";
+import { useAiRequest } from "@/lib/use-ai-request";
 import type { RefusalScripts } from "@/lib/schemas";
 import type { Profile } from "@/lib/types";
 
@@ -19,31 +27,14 @@ const SCENARIOS: readonly string[] = [
 /** Prevention side of the app: the exact words to say, rehearsed out loud. */
 export function Refusal({ profile }: { profile: Profile }) {
   const [scenario, setScenario] = useState("");
-  const [scripts, setScripts] = useState<RefusalScripts | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { data, loading, error, run } = useAiRequest<RefusalScripts>(
+    "/api/ai/refusal",
+    "Could not write the scripts just now.",
+  );
 
-  async function generate(chosen: string) {
+  function generate(chosen: string) {
     setScenario(chosen);
-    setLoading(true);
-    setError("");
-    setScripts(null);
-    try {
-      const response = await fetch("/api/ai/refusal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, scenario: chosen }),
-      });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body?.error ?? "Could not write the scripts.");
-      setScripts(body as RefusalScripts);
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "Could not write the scripts now.",
-      );
-    } finally {
-      setLoading(false);
-    }
+    void run({ profile, scenario: chosen });
   }
 
   return (
@@ -53,13 +44,13 @@ export function Refusal({ profile }: { profile: Profile }) {
           title="What will you say?"
           subtitle="Pick where you are headed. Zync writes lines you can actually say out loud."
         />
-        <div className="grid gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {SCENARIOS.map((option) => (
             <Chip
               key={option}
               label={option}
               selected={scenario === option}
-              onClick={() => void generate(option)}
+              onClick={() => generate(option)}
             />
           ))}
         </div>
@@ -75,21 +66,19 @@ export function Refusal({ profile }: { profile: Profile }) {
         ) : null}
       </Card>
 
-      {scripts
-        ? scripts.scripts.map((script, index) => (
-            <Card key={index}>
-              <p className="text-xl font-semibold leading-relaxed">“{script.line}”</p>
-              <p className="mt-2 text-sm text-muted">{script.why}</p>
-              <div className="mt-4">
-                <PrimaryButton tone="quiet" onClick={() => speak(script.line)}>
-                  <span className="flex items-center justify-center gap-2">
-                    <Volume2 aria-hidden size={20} /> Hear it out loud
-                  </span>
-                </PrimaryButton>
-              </div>
-            </Card>
-          ))
-        : null}
+      {data?.scripts.map((script, index) => (
+        <Card key={index}>
+          <p className="text-xl font-semibold leading-relaxed">“{script.line}”</p>
+          <p className="mt-2 text-sm text-muted">{script.why}</p>
+          <div className="mt-4">
+            <PrimaryButton tone="quiet" onClick={() => speak(script.line)}>
+              <span className="flex items-center justify-center gap-2">
+                <Volume2 aria-hidden size={20} /> Hear it out loud
+              </span>
+            </PrimaryButton>
+          </div>
+        </Card>
+      ))}
     </section>
   );
 }

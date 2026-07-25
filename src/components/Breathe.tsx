@@ -10,27 +10,38 @@ const PHASES: readonly Phase[] = [
   { label: "Breathe out", seconds: 8 },
 ];
 
+const CYCLE_SECONDS = PHASES.reduce((total, phase) => total + phase.seconds, 0);
+
+/**
+ * Where in the 4-7-8 cycle a given elapsed second falls. Deriving this from one
+ * counter keeps the phase and the countdown from ever disagreeing, and means the
+ * timer never has to write one piece of state from another.
+ */
+export function phaseAt(elapsedSeconds: number): { phase: Phase; remaining: number } {
+  let offset = elapsedSeconds % CYCLE_SECONDS;
+  for (const phase of PHASES) {
+    if (offset < phase.seconds) {
+      return { phase, remaining: phase.seconds - offset };
+    }
+    offset -= phase.seconds;
+  }
+  return { phase: PHASES[0], remaining: PHASES[0].seconds };
+}
+
 /**
  * 4-7-8 pacing. Deliberately has no AI in it: when the model or the network is
  * down, this still gives a person in crisis something that works.
  */
 export function Breathe({ onClose }: { onClose: () => void }) {
-  const [phaseIndex, setPhaseIndex] = useState(0);
-  const [remaining, setRemaining] = useState(PHASES[0].seconds);
+  // A single ticking counter; phase and countdown are both derived from it.
+  const [elapsed, setElapsed] = useState(0);
 
-  // One timer per phase; when it runs out, advance and reset the count.
   useEffect(() => {
-    if (remaining <= 0) {
-      const next = (phaseIndex + 1) % PHASES.length;
-      setPhaseIndex(next);
-      setRemaining(PHASES[next].seconds);
-      return;
-    }
-    const timer = setTimeout(() => setRemaining((value) => value - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [remaining, phaseIndex]);
+    const timer = setInterval(() => setElapsed((value) => value + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const phase = PHASES[phaseIndex];
+  const { phase, remaining } = phaseAt(elapsed);
 
   return (
     <div className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-surface p-8">

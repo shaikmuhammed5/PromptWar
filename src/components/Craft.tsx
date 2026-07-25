@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GraduationCap } from "lucide-react";
 import { Card, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
 import { CRAFT_MODULES, type CraftModuleId } from "@/lib/ai/prompts";
+import { useAiRequest } from "@/lib/use-ai-request";
 import type { CraftResponse } from "@/lib/schemas";
 import type { Substance } from "@/lib/types";
 
@@ -47,35 +48,19 @@ function List({
 export function Craft({ substance }: { substance: Substance }) {
   const [moduleId, setModuleId] = useState<CraftModuleId | null>(null);
   const [situation, setSituation] = useState("");
-  const [result, setResult] = useState<CraftResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    data: result,
+    loading,
+    error,
+    run,
+    reset,
+  } = useAiRequest<CraftResponse>("/api/ai/craft", "Could not build your coaching.");
 
   const active = CRAFT_MODULES.find((module) => module.id === moduleId);
 
-  async function run() {
+  function coach() {
     if (!moduleId || !situation.trim()) return;
-    setLoading(true);
-    setError("");
-    setResult(null);
-    try {
-      const response = await fetch("/api/ai/craft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ moduleId, substance, situation: situation.trim() }),
-      });
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(body?.error ?? "Could not build your coaching.");
-      }
-      setResult((await response.json()) as CraftResponse);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Could not do that now.");
-    } finally {
-      setLoading(false);
-    }
+    void run({ moduleId, substance, situation: situation.trim() });
   }
 
   return (
@@ -92,8 +77,7 @@ export function Craft({ substance }: { substance: Substance }) {
               type="button"
               onClick={() => {
                 setModuleId(module.id);
-                setResult(null);
-                setError("");
+                reset();
               }}
               aria-pressed={moduleId === module.id}
               className={`rounded-2xl border p-4 text-left transition ${
@@ -132,7 +116,7 @@ export function Craft({ substance }: { substance: Substance }) {
             />
           </label>
           <div className="mt-4">
-            <PrimaryButton onClick={() => void run()} disabled={loading || !situation.trim()}>
+            <PrimaryButton onClick={coach} disabled={loading || !situation.trim()}>
               {loading ? "Working…" : "Coach me through this"}
             </PrimaryButton>
           </div>
