@@ -35,6 +35,8 @@ follows the same rule — chips, voice, and a camera instead of text fields.
 | **Refusal scripts** | Pick a scenario → 3 lines you can actually say out loud, each speakable via TTS | Gemini Flash (gemini-flash-latest), JSON mode |
 | **Learn** | Lesson + quiz generated for *your* substance and *your* stage — not a content table | Gemini Flash (gemini-flash-latest), JSON mode |
 | **Caregiver view** | Reads the event log and answers the 11pm question: what do I say, and what will make it worse | Gemini Flash (gemini-flash-latest), JSON mode |
+| **CRAFT family training** | Four evidence-based modules coaching a caregiver on their *own* situation: map the pattern, reward sober days, rewrite the sentence they want to say, stop softening the fall | Gemini Flash (gemini-flash-latest), JSON mode |
+| **Crisis override** | Overdose and self-harm language escalates to emergency numbers *before* and *independently of* the model | Deterministic — no AI in the path |
 | **Breathe** | 4-7-8 paced breathing | No AI — works when everything else is down |
 | **Helplines** | Tele-MANAS 14416, KIRAN, NIMHANS, 112 — real verified numbers | No AI — the fallback rail |
 
@@ -69,6 +71,7 @@ the API key never reaches the browser.
 | `src/app/api/ai/refusal/route.ts` | Refusal scripts | structured JSON |
 | `src/app/api/ai/learn/route.ts` | Lesson + quiz | structured JSON |
 | `src/app/api/ai/caregiver/route.ts` | Caregiver guidance | structured JSON |
+| `src/app/api/ai/craft/route.ts` | CRAFT family-training modules | structured JSON |
 | `src/lib/speech.ts` | **Web Speech API** — browser-native STT (check-ins) and TTS (reading scripts aloud) | browser |
 
 Every model response is validated with Zod before it reaches the UI (`src/lib/schemas.ts`), so a
@@ -107,7 +110,10 @@ npm run build     # production build
 - **Rate limiting** — fixed-window limiter on all AI routes (`src/lib/rate-limit.ts`).
 - **No health data on the server** — profiles, transcripts, and events live in the user's own browser (`localStorage`). There is no database and no account, so there is no health record to breach.
 - **Sanitised logging** — errors log a type label only; transcripts and check-in content never reach the logs.
-- **Clinical safety rail** — the shared system prompt forbids diagnosis and dosage advice and forces escalation to 112 / Tele-MANAS 14416 on any sign of medical emergency.
+- **Clinical safety rail** — the shared system prompt forbids diagnosis and dosage advice, refuses to opine on whether stopping a substance abruptly is safe (unsupervised alcohol and opioid withdrawal can kill), and forces escalation to 112 / Tele-MANAS 14416 on any sign of emergency.
+- **Deterministic crisis override** (`src/lib/crisis.ts`) — overdose and self-harm language escalates to emergency numbers *before* the model is called and *regardless* of what it returns. A wrong generation, a quota failure, or an outage cannot suppress it. Tuned to over-trigger on purpose.
+- **Anti-dependency design** — the prompt forbids the model from claiming feelings, memory, or a relationship, and pushes users toward their anchor, a counsellor, or a helpline rather than back toward itself. Digital mental-health tools measurably worsen isolation when they let users attach to them; this one is built as scaffolding for human contact, not a substitute.
+- **Person-first, anti-stigma language** — enforced in the shared prompt: never "addict", never "clean/dirty".
 
 ## Accessibility
 
@@ -118,6 +124,15 @@ npm run build     # production build
 - `prefers-reduced-motion` honoured — the SOS pulse and breathing orb stop for vestibular sensitivity.
 - Speech unsupported? Every voice surface degrades to an equivalent typed path.
 - High-contrast dark palette; plain-English crisis copy, short sentences, no clinical jargon.
+
+## Clinical grounding
+
+- **CRAFT** (Community Reinforcement and Family Training) drives the caregiver side. It engages roughly **64%** of treatment-resistant users into care, against ~23% for confrontational intervention and ~13–17% for twelve-step facilitation, while measurably reducing the caregiver's own depression and anxiety. It works by teaching the family to change what their behaviour rewards — never by confrontation or ultimatum.
+- **Escalation to real infrastructure** — the app is deliberately a triage layer in front of India's existing safety net (NMBA 14446, Tele-MANAS 14416, KIRAN, 112), not a standalone replacement for it. The standalone-product assumption is what sank the first generation of prescription digital therapeutics.
+
+## Responsive
+
+One codebase, two layouts. Mobile is the primary target — single column, thumb-reachable SOS, floating emergency button on every screen. From `md` upward the app switches to a persistent left rail carrying SOS and full navigation, with a wider content column. Every screen is addressable by URL, so back and the phone's swipe-back gesture step through history correctly.
 
 ## Testing
 

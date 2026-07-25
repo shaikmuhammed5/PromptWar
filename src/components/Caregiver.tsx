@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
+import { Card, Chip, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
+import { Craft } from "@/components/Craft";
 import { Helplines } from "@/components/Helplines";
 import type { CaregiverGuidance } from "@/lib/schemas";
-import type { AppState } from "@/lib/types";
+import { SUBSTANCE_LABELS, type AppState, type Substance } from "@/lib/types";
+
+type Tab = "now" | "training";
 
 function timeAgo(at: number): string {
   const minutes = Math.round((Date.now() - at) / 60_000);
@@ -24,6 +27,13 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
   const [guidance, setGuidance] = useState<CaregiverGuidance | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tab, setTab] = useState<Tab>("now");
+  /**
+   * A caregiver may reach for this before the person they support ever opens the
+   * app, so CRAFT must work standalone — they pick the substance themselves when
+   * there is no linked profile to read it from.
+   */
+  const [chosenSubstance, setChosenSubstance] = useState<Substance>("alcohol");
 
   const events = [
     ...state.sosEvents.map((event) => ({
@@ -71,7 +81,7 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
   }
 
   return (
-    <main className="mx-auto w-full max-w-lg px-5 py-8">
+    <main className="mx-auto w-full max-w-3xl px-5 py-8">
       <div className="grid gap-5">
         <Card>
           <SectionTitle
@@ -98,6 +108,58 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
           </div>
         </Card>
 
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setTab("now")}
+            aria-pressed={tab === "now"}
+            className={`min-h-14 rounded-xl border font-semibold ${
+              tab === "now" ? "border-accent bg-accent/10" : "border-border bg-surface-2"
+            }`}
+          >
+            Right now
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("training")}
+            aria-pressed={tab === "training"}
+            className={`min-h-14 rounded-xl border font-semibold ${
+              tab === "training"
+                ? "border-accent bg-accent/10"
+                : "border-border bg-surface-2"
+            }`}
+          >
+            Family training
+          </button>
+        </div>
+
+        {tab === "training" ? (
+          <>
+            {!linked ? (
+              <Card>
+                <h3 className="mb-3 font-bold">What are they using?</h3>
+                <p className="mb-4 text-sm text-muted">
+                  Nobody is linked on this device, so tell Zync this much and the training
+                  still works. You do not need their permission to learn this.
+                </p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {(Object.keys(SUBSTANCE_LABELS) as Substance[]).map((key) => (
+                    <Chip
+                      key={key}
+                      label={SUBSTANCE_LABELS[key]}
+                      selected={chosenSubstance === key}
+                      onClick={() => setChosenSubstance(key)}
+                    />
+                  ))}
+                </div>
+              </Card>
+            ) : null}
+            <Craft substance={state.profile?.substance ?? chosenSubstance} />
+          </>
+        ) : null}
+
+        {tab === "now" ? (
+          <>
         <Card>
           <h3 className="mb-3 font-bold">What do I say right now?</h3>
           <p className="mb-4 text-sm text-muted">
@@ -184,6 +246,8 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
             </p>
           )}
         </Card>
+          </>
+        ) : null}
 
         <Helplines compact />
 

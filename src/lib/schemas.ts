@@ -127,3 +127,46 @@ export type RefusalScripts = z.infer<typeof refusalScriptsSchema>;
 export type JournalAnalysis = z.infer<typeof journalAnalysisSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type CaregiverGuidance = z.infer<typeof caregiverGuidanceSchema>;
+
+const craftModuleId = z.enum([
+  "functional-analysis",
+  "positive-reinforcement",
+  "communication",
+  "enabling",
+]);
+
+export const craftRequestSchema = z.object({
+  moduleId: craftModuleId,
+  substance,
+  situation: z.string().trim().min(1).max(1500),
+});
+
+/**
+ * Each CRAFT module returns a different shape, so the response is a union of
+ * optional sections and the UI renders whichever arrived. Keeping one schema
+ * avoids four near-identical route handlers.
+ */
+export const craftResponseSchema = z.object({
+  heading: z.string().max(160),
+  // communication
+  rewrite: z.string().max(800).optional(),
+  why: z.string().max(500).optional(),
+  practice: z.string().max(300).optional(),
+  avoid: z.array(z.string().max(240)).max(4).optional(),
+  // functional analysis
+  triggers: z.array(z.string().max(160)).max(6).optional(),
+  shortTermPayoff: z.array(z.string().max(200)).max(5).optional(),
+  longTermCost: z.array(z.string().max(200)).max(5).optional(),
+  leverage: z.array(z.string().max(240)).max(4).optional(),
+  // reinforcement
+  rewardThese: z.array(z.string().max(200)).max(5).optional(),
+  howToReward: z.array(z.string().max(240)).max(5).optional(),
+  withdrawGently: z.array(z.string().max(240)).max(5).optional(),
+  // enabling
+  likelyEnabling: z.array(z.string().max(240)).max(5).optional(),
+  insteadTry: z.array(z.string().max(240)).max(5).optional(),
+  keepDoing: z.array(z.string().max(240)).max(4).optional(),
+  nextStep: z.string().max(400).optional(),
+});
+
+export type CraftResponse = z.infer<typeof craftResponseSchema>;

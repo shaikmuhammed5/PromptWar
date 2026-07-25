@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   BookOpen,
   Camera,
+  Home,
   Mic,
   MessageSquareQuote,
   Phone,
@@ -146,8 +147,9 @@ function ZyncApp() {
 
   if (view === "landing") {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center px-5 py-10">
-        <h1 className="text-6xl font-black tracking-tight">
+      <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-10 px-5 py-10 md:flex-row md:items-center">
+        <div className="md:flex-1">
+        <h1 className="text-6xl font-black tracking-tight md:text-7xl">
           Zync<span className="text-accent">.</span>
         </h1>
         <p className="mt-3 text-2xl font-semibold text-accent">You are not alone.</p>
@@ -171,7 +173,8 @@ function ZyncApp() {
             I am caring for someone
           </button>
         </div>
-        <div className="mt-10">
+        </div>
+        <div className="md:w-80 md:shrink-0">
           <Helplines compact />
         </div>
       </main>
@@ -205,8 +208,62 @@ function ZyncApp() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-lg px-5 pb-28 pt-6">
-      <header className="mb-6 flex items-start justify-between gap-4">
+    <div className="mx-auto flex w-full max-w-6xl gap-8 px-5 pb-28 pt-6 md:pb-8">
+      {/* Desktop rail: the whole app reachable without scrolling or going home. */}
+      <aside className="hidden w-60 shrink-0 md:block">
+        <div className="sticky top-6 grid gap-4">
+          <div>
+            <p className="text-sm text-muted">
+              {profile.name ? `Hello, ${profile.name}` : "Hello"}
+            </p>
+            <h1 className="text-2xl font-black">
+              Zync<span className="text-accent">.</span>
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={() => go("sos")}
+            className="flex min-h-16 items-center justify-center gap-2 rounded-2xl bg-danger font-bold text-white"
+          >
+            <ShieldAlert aria-hidden size={22} /> I need help now
+          </button>
+          <nav className="grid gap-1">
+            {[{ view: "home" as View, Icon: Home, label: "Home" }, ...TABS].map((item) => (
+              <button
+                key={item.view}
+                type="button"
+                onClick={() => go(item.view)}
+                aria-current={view === item.view ? "page" : undefined}
+                className={`flex min-h-12 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold transition ${
+                  view === item.view
+                    ? "bg-surface-2 text-foreground"
+                    : "text-muted hover:bg-surface"
+                }`}
+              >
+                <item.Icon aria-hidden size={18} className="text-accent" />
+                {item.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => go("breathe")}
+              className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-muted transition hover:bg-surface"
+            >
+              <Wind aria-hidden size={18} className="text-accent" /> Breathe
+            </button>
+          </nav>
+          <button
+            type="button"
+            onClick={() => go("caregiver")}
+            className="min-h-12 rounded-xl border border-border px-4 text-sm font-semibold"
+          >
+            Caregiver view
+          </button>
+        </div>
+      </aside>
+
+      <main className="min-w-0 flex-1">
+      <header className="mb-6 flex items-start justify-between gap-4 md:hidden">
         <div>
           <p className="text-sm text-muted">
             {profile.name ? `Hello, ${profile.name}` : "Hello"}
@@ -229,7 +286,7 @@ function ZyncApp() {
           <button
             type="button"
             onClick={() => go("sos")}
-            className="sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-3 rounded-3xl bg-danger text-white"
+            className="sos-pulse flex min-h-56 w-full flex-col items-center justify-center gap-3 rounded-3xl bg-danger text-white md:min-h-40"
           >
             <ShieldAlert aria-hidden size={56} strokeWidth={1.75} />
             <span className="text-3xl font-black">I need help now</span>
@@ -254,7 +311,7 @@ function ZyncApp() {
             ) : null}
           </Card>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:hidden">
             {TABS.map((tab) => (
               <button
                 key={tab.view}
@@ -311,13 +368,14 @@ function ZyncApp() {
             type="button"
             onClick={() => go("sos")}
             aria-label="Emergency help now"
-            className="fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-danger text-white shadow-xl"
+            className="fixed bottom-5 right-5 flex h-16 w-16 items-center justify-center rounded-full bg-danger text-white shadow-xl md:hidden"
           >
             <ShieldAlert aria-hidden size={28} strokeWidth={2} />
           </button>
         </>
       ) : null}
-    </main>
+      </main>
+    </div>
   );
 }
 

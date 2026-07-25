@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square } from "lucide-react";
+import { CrisisBanner } from "@/components/CrisisBanner";
+import { assessCrisis, escalateForRisk, type CrisisAssessment } from "@/lib/crisis";
 import { Card, ErrorNote, PrimaryButton, SectionTitle, Spinner } from "@/components/ui";
 import { isSpeechInputSupported, listen, type Listener } from "@/lib/speech";
 import type { CheckInAnalysis } from "@/lib/schemas";
@@ -42,6 +44,7 @@ export function CheckIn({
   const [listening, setListening] = useState(false);
   const [analysing, setAnalysing] = useState(false);
   const [analysis, setAnalysis] = useState<CheckInAnalysis | null>(null);
+  const [crisis, setCrisis] = useState<CrisisAssessment>({ level: "none", reason: "" });
   const [error, setError] = useState("");
   const listenerRef = useRef<Listener | null>(null);
   const [speechSupported, setSpeechSupported] = useState(true);
@@ -54,6 +57,7 @@ export function CheckIn({
   function startListening() {
     setError("");
     setAnalysis(null);
+    setCrisis({ level: "none", reason: "" });
     setTranscript("");
     setListening(true);
     listenerRef.current = listen({
@@ -81,6 +85,10 @@ export function CheckIn({
       setError("Nothing was captured. Try again, or type it instead.");
       return;
     }
+    // Deterministic first: this must fire even if the model call never lands.
+    const detected = assessCrisis(trimmed);
+    setCrisis(detected);
+
     setAnalysing(true);
     setError("");
     try {
@@ -93,6 +101,7 @@ export function CheckIn({
       if (!response.ok) throw new Error(body?.error ?? "Analysis failed.");
       const result = body as CheckInAnalysis;
       setAnalysis(result);
+      setCrisis((current) => escalateForRisk(current, result.riskScore));
       onAnalysed(trimmed, result);
     } catch (caught) {
       setError(
@@ -107,6 +116,8 @@ export function CheckIn({
 
   return (
     <section className="grid gap-5">
+      <CrisisBanner assessment={crisis} />
+
       <Card>
         <SectionTitle
           title="How is today going?"
