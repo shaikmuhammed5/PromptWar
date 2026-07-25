@@ -39,7 +39,7 @@ export function aiErrorStatus(error: unknown): number {
 }
 
 export function aiErrorBody(error: unknown): { error: string } {
-  console.error("[thunai] ai route failed:", errorLabel(error));
+  console.error("[zync] ai route failed:", errorLabel(error));
   return {
     error:
       error instanceof MissingKeyError

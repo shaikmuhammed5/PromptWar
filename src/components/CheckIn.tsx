@@ -154,7 +154,7 @@ export function CheckIn({
 
         {analysing ? (
           <div className="mt-4">
-            <Spinner label="Thunai is listening between the lines…" />
+            <Spinner label="Zync is listening between the lines…" />
           </div>
         ) : null}
         {error ? (
@@ -179,7 +179,7 @@ export function CheckIn({
 
           {analysis.triggersDetected.length ? (
             <p className="mt-3 text-sm text-muted">
-              Triggers Thunai heard: {analysis.triggersDetected.join(", ")}
+              Triggers Zync heard: {analysis.triggersDetected.join(", ")}
             </p>
           ) : null}
 

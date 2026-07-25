@@ -50,7 +50,7 @@ export function Refusal({ profile }: { profile: Profile }) {
       <Card>
         <SectionTitle
           title="What will you say?"
-          subtitle="Pick where you are headed. Thunai writes lines you can actually say out loud."
+          subtitle="Pick where you are headed. Zync writes lines you can actually say out loud."
         />
         <div className="grid gap-3">
           {SCENARIOS.map((option) => (

@@ -131,7 +131,7 @@ export default function Page() {
   if (!hydrated) {
     return (
       <main className="flex min-h-screen items-center justify-center px-5">
-        <p className="text-muted">Loading Thunai…</p>
+        <p className="text-muted">Loading Zync…</p>
       </main>
     );
   }
@@ -140,7 +140,7 @@ export default function Page() {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-center px-5 py-10">
         <h1 className="text-6xl font-black tracking-tight">
-          Thunai<span className="text-accent">.</span>
+          Zync<span className="text-accent">.</span>
         </h1>
         <p className="mt-3 text-2xl font-semibold text-accent">நீ தனியா இல்ல</p>
         <p className="mt-1 text-lg text-muted">Nee thaniya illa — you are not alone.</p>
@@ -211,7 +211,7 @@ export default function Page() {
             {profile.name ? `Vanakkam, ${profile.name}` : "Vanakkam"}
           </p>
           <h1 className="text-2xl font-black">
-            Thunai<span className="text-accent">.</span>
+            Zync<span className="text-accent">.</span>
           </h1>
         </div>
         <button

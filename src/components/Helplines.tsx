@@ -39,7 +39,7 @@ export function Helplines({ compact = false }: { compact?: boolean }) {
       {!compact ? (
         <Card className="mt-4">
           <p className="text-sm text-muted">
-            Thunai is a companion, not a doctor. If someone has stopped breathing, is
+            Zync is a companion, not a doctor. If someone has stopped breathing, is
             unconscious, or has taken far more than usual, call{" "}
             <a href="tel:112" className="font-semibold text-danger underline">
               112

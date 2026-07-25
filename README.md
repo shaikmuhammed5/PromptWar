@@ -1,10 +1,15 @@
-# Thunai (துணை) — AI Recovery & Prevention Companion
+# Zync — AI Recovery & Prevention Companion
 
 > **நீ தனியா இல்ல** — *Nee thaniya illa.* You are not alone.
 
-**Thunai** is Tamil for *the companion who stands beside you*. That is the whole product thesis: not a
-clinic portal, not a habit tracker — a companion that reaches a person in the exact minute a craving
-peaks, when their cognitive load is highest and typing a paragraph into a chat box is impossible.
+**Zync** syncs a person in recovery with the two things they lose hold of mid-craving: a clear next
+action, and their people. That is the whole product thesis — not a clinic portal, not a habit tracker,
+but a companion that arrives in the exact minute a craving peaks, when cognitive load is highest and
+typing a paragraph into a chat box is impossible.
+
+The one person a user nominates as their 2am contact is their **Thunai** (துணை) — Tamil for *the
+companion who stands beside you*. Zync is the app; your Thunai is the human it puts you back in touch
+with.
 
 Built for **Build with AI: PromptWars** — Recovery and Prevention Platform challenge.
 
@@ -14,7 +19,7 @@ Built for **Build with AI: PromptWars** — Recovery and Prevention Platform cha
 
 ## Why it looks the way it does
 
-A person mid-craving cannot compose a prompt. So Thunai's hero path takes **two taps and zero typed
+A person mid-craving cannot compose a prompt. So Zync's hero path takes **two taps and zero typed
 characters**: tap SOS, tap the face that matches the urge, and a personalised de-escalation script
 streams in and is *read aloud automatically*. They never have to read it. Everything else in the app
 follows the same rule — chips, voice, and a camera instead of text fields.
@@ -25,12 +30,12 @@ follows the same rule — chips, voice, and a camera instead of text fields.
 
 | Feature | What it does | Model use |
 |---|---|---|
-| **SOS** | 2 taps → streamed, spoken de-escalation script built from substance, streak, triggers, craving level, and time of day | Gemini 2.5 Flash, **streaming** |
-| **Voice check-in** | Speak freely → transcript → structured `{mood, riskScore, triggers, tools}` → **risk score decides which safety tools appear** | Gemini 2.5 Flash, JSON mode |
-| **Trigger journal** | Photograph a real place → Gemini names what in it pulls at you → **triggers written back into the profile**, so future SOS scripts get sharper | Gemini 2.5 Flash **Vision** |
-| **Refusal scripts** | Pick a scenario → 3 lines you can actually say out loud, each speakable via TTS | Gemini 2.5 Flash, JSON mode |
-| **Learn** | Lesson + quiz generated for *your* substance and *your* stage — not a content table | Gemini 2.5 Flash, JSON mode |
-| **Caregiver view** | Reads the event log and answers the 11pm question: what do I say, and what will make it worse | Gemini 2.5 Flash, JSON mode |
+| **SOS** | 2 taps → streamed, spoken de-escalation script built from substance, streak, triggers, craving level, and time of day | Gemini Flash (gemini-flash-latest), **streaming** |
+| **Voice check-in** | Speak freely → transcript → structured `{mood, riskScore, triggers, tools}` → **risk score decides which safety tools appear** | Gemini Flash (gemini-flash-latest), JSON mode |
+| **Trigger journal** | Photograph a real place → Gemini names what in it pulls at you → **triggers written back into the profile**, so future SOS scripts get sharper | Gemini Flash (gemini-flash-latest) **Vision** |
+| **Refusal scripts** | Pick a scenario → 3 lines you can actually say out loud, each speakable via TTS | Gemini Flash (gemini-flash-latest), JSON mode |
+| **Learn** | Lesson + quiz generated for *your* substance and *your* stage — not a content table | Gemini Flash (gemini-flash-latest), JSON mode |
+| **Caregiver view** | Reads the event log and answers the 11pm question: what do I say, and what will make it worse | Gemini Flash (gemini-flash-latest), JSON mode |
 | **Breathe** | 4-7-8 paced breathing | No AI — works when everything else is down |
 | **Helplines** | Tele-MANAS 14416, KIRAN, NIMHANS, 112 — real verified numbers | No AI — the fallback rail |
 
@@ -52,12 +57,12 @@ failure state falls back to the breathing timer and real helplines, which need n
 
 ## Gen AI services used, and where
 
-**Google Gemini 2.5 Flash** via the official `@google/genai` SDK. All calls are **server-side only** —
+**Google Gemini Flash (gemini-flash-latest)** via the official `@google/genai` SDK. All calls are **server-side only** —
 the API key never reaches the browser.
 
 | Location | Service | Mode |
 |---|---|---|
-| `src/lib/ai/gemini.ts` | Gemini 2.5 Flash client, JSON generation + streaming helpers | core |
+| `src/lib/ai/gemini.ts` | Gemini Flash (gemini-flash-latest) client, JSON generation + streaming helpers | core |
 | `src/lib/ai/prompts.ts` | All system instructions and prompt builders (pure functions, unit-tested) | core |
 | `src/app/api/ai/sos/route.ts` | De-escalation script | **streaming text** |
 | `src/app/api/ai/checkin/route.ts` | Risk analysis of a spoken check-in | structured JSON |
@@ -127,10 +132,10 @@ rate-limit window behaviour, and every Zod boundary schema.
 
 ## Tech
 
-Next.js 15 (App Router, TypeScript strict) · Gemini 2.5 Flash · Web Speech API · Tailwind v4 · Zod ·
+Next.js 15 (App Router, TypeScript strict) · Gemini Flash (gemini-flash-latest) · Web Speech API · Tailwind v4 · Zod ·
 Vitest · deployed on Vercel.
 
 ---
 
-*Thunai is a companion, not a clinician. In an emergency call 112. For mental health support in India,
+*Zync is a companion, not a clinician. In an emergency call 112. For mental health support in India,
 Tele-MANAS is 14416, free and 24x7.*

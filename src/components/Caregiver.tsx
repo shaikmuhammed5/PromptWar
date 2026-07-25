@@ -95,11 +95,11 @@ export function Caregiver({ state, onExit }: { state: AppState; onExit: () => vo
         <Card>
           <h3 className="mb-3 font-bold">What do I say right now?</h3>
           <p className="mb-4 text-sm text-muted">
-            Thunai reads the pattern in the events below and gives you words — including
+            Zync reads the pattern in the events below and gives you words — including
             the ones to hold back.
           </p>
           <PrimaryButton onClick={() => void askGemini()} disabled={loading}>
-            {loading ? "Thinking…" : "Ask Thunai"}
+            {loading ? "Thinking…" : "Ask Zync"}
           </PrimaryButton>
           {loading ? (
             <div className="mt-4">

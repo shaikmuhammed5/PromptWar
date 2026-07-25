@@ -104,7 +104,7 @@ export function SosFlow({
         <Card>
           <h1 className="text-3xl font-black">How strong is it right now?</h1>
           <p className="mt-2 text-muted">
-            One tap. That is all Thunai needs. Nee thaniya illa.
+            One tap. That is all Zync needs. Nee thaniya illa.
           </p>
           <div className="mt-6 grid gap-3">
             {CRAVING_FACES.map((option) => (
@@ -137,7 +137,7 @@ export function SosFlow({
             <h1 className="text-2xl font-black">Do this with me</h1>
             {streaming && !script ? (
               <div className="mt-4">
-                <Spinner label="Thunai is writing your steps…" />
+                <Spinner label="Zync is writing your steps…" />
               </div>
             ) : null}
 

@@ -84,8 +84,8 @@ export function Journal({
     <section className="grid gap-5">
       <Card>
         <SectionTitle
-          title="Show Thunai the place"
-          subtitle="A street, a room, a shop, a face in a crowd. Thunai names what in it pulls at you."
+          title="Show Zync the place"
+          subtitle="A street, a room, a shop, a face in a crowd. Zync names what in it pulls at you."
         />
         <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-2 p-6 text-center transition hover:border-accent">
           <span aria-hidden className="text-5xl">
@@ -106,14 +106,14 @@ export function Journal({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={preview}
-            alt="The photo you shared with Thunai"
+            alt="The photo you shared with Zync"
             className="mt-4 max-h-64 w-full rounded-xl object-cover"
           />
         ) : null}
 
         {loading ? (
           <div className="mt-4">
-            <Spinner label="Thunai is looking…" />
+            <Spinner label="Zync is looking…" />
           </div>
         ) : null}
         {error ? (
@@ -127,7 +127,7 @@ export function Journal({
         <Card>
           {analysis.triggers.length ? (
             <>
-              <h3 className="text-sm font-semibold text-muted">What Thunai sees here</h3>
+              <h3 className="text-sm font-semibold text-muted">What Zync sees here</h3>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {analysis.triggers.map((trigger) => (
                   <li

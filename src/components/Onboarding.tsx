@@ -46,7 +46,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
         <Card>
           <SectionTitle
             title="What are you stepping away from?"
-            subtitle="This shapes everything Thunai says to you. Nothing leaves your phone."
+            subtitle="This shapes everything Zync says to you. Nothing leaves your phone."
           />
           <div className="grid grid-cols-2 gap-3">
             {(Object.keys(SUBSTANCE_LABELS) as Substance[]).map((key) => (
@@ -90,7 +90,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
         <Card>
           <SectionTitle
             title="What usually pulls you back?"
-            subtitle="Pick as many as fit. Thunai will watch for these."
+            subtitle="Pick as many as fit. Zync will watch for these."
           />
           <div className="grid grid-cols-2 gap-3">
             {TRIGGER_OPTIONS.map((trigger) => (
@@ -143,7 +143,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
                 className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
               />
             </label>
-            <PrimaryButton onClick={finish}>Enter Thunai</PrimaryButton>
+            <PrimaryButton onClick={finish}>Enter Zync</PrimaryButton>
           </div>
         </Card>
       ) : null}

@@ -1,7 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 import type { ZodType } from "zod";
 
-export const MODEL = "gemini-2.5-flash";
+/**
+ * Tracks the current Flash model. Pinning an explicit version (gemini-2.5-flash)
+ * broke here with a 404 — that version is closed to new API keys — so the alias
+ * is deliberate: it keeps working as Google rotates the underlying model.
+ */
+export const MODEL = "gemini-flash-latest";
 
 let client: GoogleGenAI | null = null;
 
