@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b1020;
+  --surface: #151c33;
+  --surface-2: #1e2745;
+  --foreground: #eef1f8;
+  --muted: #a3adc9;
+  --accent: #ffb454;
+  --danger: #ff5a5f;
+  --safe: #4ade80;
+  --border: #2a3459;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-safe: var(--safe);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Visible focus everywhere — crisis users navigate fast and often by keyboard. */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@keyframes pulse-sos {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 26px rgba(255, 90, 95, 0);
+  }
+}
+
+.sos-pulse {
+  animation: pulse-sos 2.4s ease-out infinite;
+}
+
+@keyframes breathe-scale {
+  0% {
+    transform: scale(0.55);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.breathe-orb {
+  animation: breathe-scale 4s ease-in-out infinite alternate;
+}
+
+/* Respect vestibular sensitivity — motion is decoration, never information. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
