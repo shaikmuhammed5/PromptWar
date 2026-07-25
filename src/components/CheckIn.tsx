@@ -142,32 +142,33 @@ export function CheckIn({
           {listening ? "Listening — tap to finish" : "Tap and speak"}
         </button>
 
-        {transcript ? (
-          <p className="mt-4 rounded-xl bg-surface-2 p-4 text-base italic">
-            “{transcript}”
-          </p>
-        ) : null}
-
-        {!speechSupported ? (
-          <div className="mt-4 grid gap-3">
-            <p className="text-sm text-muted">
-              This browser cannot listen. Type it instead — the analysis is identical.
-            </p>
+        {/*
+          The typed path is always present, never gated on speech being broken.
+          Dictation depends on a remote service, a microphone, and a permission
+          prompt — three things that fail routinely — and the check-in is too
+          important to lose when any of them does. Speech fills this box in, so
+          both routes end in the same place.
+        */}
+        <div className="mt-4 grid gap-3">
+          <label className="grid gap-2 text-sm text-muted">
+            {speechSupported
+              ? "Or write it — same analysis either way. Speaking fills this in."
+              : "This browser cannot listen. Write it instead — same analysis."}
             <textarea
               value={transcript}
               onChange={(event) => setTranscript(event.target.value)}
               rows={3}
-              placeholder="Today was rough…"
-              className="rounded-xl border border-border bg-surface-2 p-4 text-base"
+              placeholder="Today was rough, I nearly went into the bar near work…"
+              className="rounded-xl border border-border bg-surface-2 p-4 text-base italic text-foreground"
             />
-            <PrimaryButton
-              onClick={() => void analyse(transcript)}
-              disabled={analysing || !transcript.trim()}
-            >
-              Analyse this
-            </PrimaryButton>
-          </div>
-        ) : null}
+          </label>
+          <PrimaryButton
+            onClick={() => void analyse(transcript)}
+            disabled={analysing || !transcript.trim()}
+          >
+            {analysing ? "Reading it…" : "Analyse this"}
+          </PrimaryButton>
+        </div>
 
         {analysing ? (
           <div className="mt-4">
