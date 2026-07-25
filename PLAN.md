@@ -1,16 +1,16 @@
 # Zync — Recovery & Prevention Companion
 
 **Zync** syncs a person in recovery with a clear next action and with their people.
-The trusted human they nominate is their **Thunai** (துணை) — Tamil for *the companion who stands beside you*.
-Tagline: **"நீ தனியா இல்ல" — Nee thaniya illa. You are not alone.**
+The trusted human they nominate is their **anchor**.
+Tagline: **You are not alone.**
 
 AI recovery companion for people facing substance use disorders and the caregivers holding them up.
 GenAI at the core: every primary feature is a real Gemini call. No canned outputs, no mock data.
 
-Why the naming matters: Zync is the tool, your Thunai is the person. This is not a clinic app. Every screen speaks in
+Why the naming matters: Zync is the tool, your anchor is the person. This is not a clinic app. Every screen speaks in
 second person, every intervention is one tap, and the app never asks a person in crisis to explain themselves
-in a text box. Tamil/English bilingual microcopy on the crisis surfaces (SOS, breathing, helplines) — regional
-language at the exact moment cognitive load is highest is a real accessibility win, not decoration.
+in a text box. Crisis surfaces (SOS, breathing, helplines) use short plain-English sentences — readable
+at the exact moment cognitive load is highest.
 
 ## Judging Alignment (why each feature exists)
 
@@ -28,12 +28,12 @@ language at the exact moment cognitive load is highest is a real accessibility w
 ## Usage Flow
 
 ### First open (≤ 30 seconds, no typing required beyond name)
-1. Landing: name **Zync**, tagline in Tamil + English, two big buttons — **"I am recovering"** / **"I am a caregiver"**.
+1. Landing: name **Zync**, tagline, two big buttons — **"I am recovering"** / **"I am a caregiver"**.
 2. Recovering path → 4-tap onboarding, all chips, no free text:
    - Which substance? (alcohol / tobacco / cannabis / opioids / other)
    - Days since last use? (today / this week / 1 month+ / 6 months+)
    - What usually triggers you? (multi-select chips: stress, friends, night, loneliness, money, celebration)
-   - Who is your Thunai? (name + phone of one trusted person — the only typed field, and it is skippable)
+   - Who is your anchor? (name + phone of one trusted person — the only typed field, and it is skippable)
 3. Profile saved locally. Straight to Home.
 
 ### Home screen — the whole app is one thumb away
@@ -44,10 +44,10 @@ language at the exact moment cognitive load is highest is a real accessibility w
 ### Flow 1 — SOS (hero, zero typing)
 1. Tap **SOS**.
 2. Screen shows 5 large emoji faces: *how strong is the urge right now?* Tap one. **Total input so far: 2 taps.**
-3. App builds a prompt server-side from: substance, streak, saved triggers, chosen craving level, time of day, Thunai contact name.
+3. App builds a prompt server-side from: substance, streak, saved triggers, chosen craving level, time of day, anchor contact name.
 4. Gemini streams a personalized de-escalation script — short second-person lines, present tense, one action at a time.
 5. Script renders line by line AND is spoken aloud automatically via browser TTS. User does not have to read.
-6. Under the script, three always-present buttons: **Call [their Thunai]**, **Breathe with me** (4-7-8 animated timer), **Tele-MANAS 14416**.
+6. Under the script, three always-present buttons: **Call [their anchor]**, **Breathe with me** (4-7-8 animated timer), **Tele-MANAS 14416**.
 7. Event logged to timeline → appears in caregiver feed.
 8. If Gemini fails: fallback card with verified helplines + breathing timer still works. Never a dead end.
 
@@ -55,7 +55,7 @@ language at the exact moment cognitive load is highest is a real accessibility w
 1. Tap mic. Speak freely: *"today was rough, saw the old crowd near the shop"*.
 2. Web Speech API transcribes in-browser.
 3. Transcript → Gemini → structured JSON: `{mood, riskScore 0-10, summary, triggersDetected[], toolsRecommended[]}`.
-4. UI renders the recommended safety tools **contextually** — high risk surfaces SOS + call their Thunai; low risk surfaces journaling + a lesson.
+4. UI renders the recommended safety tools **contextually** — high risk surfaces SOS + call their anchor; low risk surfaces journaling + a lesson.
 5. Check-in appended to history; streak and trend update.
 
 ### Flow 3 — Trigger journal (vision)

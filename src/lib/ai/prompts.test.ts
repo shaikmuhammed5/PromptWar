@@ -7,8 +7,8 @@ const profile: Profile = {
   substance: "alcohol",
   streak: "week",
   triggers: ["Stress", "Old friends"],
-  thunaiName: "Amma",
-  thunaiPhone: "9876543210",
+  anchorName: "Amma",
+  anchorPhone: "9876543210",
 };
 
 describe("profileContext", () => {
@@ -27,7 +27,7 @@ describe("profileContext", () => {
       ...profile,
       name: "",
       triggers: [],
-      thunaiName: "",
+      anchorName: "",
     });
 
     expect(context).toContain("friend");

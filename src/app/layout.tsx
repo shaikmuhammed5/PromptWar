@@ -5,7 +5,7 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Zync — நீ தனியா இல்ல",
+  title: "Zync — you are not alone",
   description:
     "Zync is an AI recovery companion for people facing substance use and the people who care for them. One tap reaches help, no typing required.",
 };

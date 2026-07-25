@@ -1,15 +1,14 @@
 # Zync — AI Recovery & Prevention Companion
 
-> **நீ தனியா இல்ல** — *Nee thaniya illa.* You are not alone.
+> **You are not alone.**
 
 **Zync** syncs a person in recovery with the two things they lose hold of mid-craving: a clear next
 action, and their people. That is the whole product thesis — not a clinic portal, not a habit tracker,
 but a companion that arrives in the exact minute a craving peaks, when cognitive load is highest and
 typing a paragraph into a chat box is impossible.
 
-The one person a user nominates as their 2am contact is their **Thunai** (துணை) — Tamil for *the
-companion who stands beside you*. Zync is the app; your Thunai is the human it puts you back in touch
-with.
+The one person a user nominates as their 2am contact is their **anchor**. Zync is the app; your
+anchor is the human it puts you back in touch with.
 
 Built for **Build with AI: PromptWars** — Recovery and Prevention Platform challenge.
 
@@ -118,7 +117,7 @@ npm run build     # production build
 - `aria-live` on streaming and status regions, `aria-pressed` on toggles, visible focus rings, semantic landmarks.
 - `prefers-reduced-motion` honoured — the SOS pulse and breathing orb stop for vestibular sensitivity.
 - Speech unsupported? Every voice surface degrades to an equivalent typed path.
-- High-contrast dark palette, `en-IN` speech locale, Tamil-English bilingual crisis copy.
+- High-contrast dark palette; plain-English crisis copy, short sentences, no clinical jargon.
 
 ## Testing
 

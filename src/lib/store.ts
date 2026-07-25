@@ -2,7 +2,7 @@
 
 import { EMPTY_STATE, type AppState } from "@/lib/types";
 
-const KEY = "zync.state.v1";
+const KEY = "zync.state.v2";
 
 /**
  * Local-first storage. Recovery data is among the most sensitive a person has,

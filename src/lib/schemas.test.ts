@@ -10,8 +10,8 @@ const profile = {
   substance: "alcohol",
   streak: "week",
   triggers: ["Stress"],
-  thunaiName: "Amma",
-  thunaiPhone: "9876543210",
+  anchorName: "Amma",
+  anchorPhone: "9876543210",
 };
 
 describe("sosRequestSchema", () => {

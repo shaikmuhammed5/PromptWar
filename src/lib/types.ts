@@ -13,8 +13,8 @@ export type Profile = {
   readonly substance: Substance;
   readonly streak: StreakBand;
   readonly triggers: readonly string[];
-  readonly thunaiName: string;
-  readonly thunaiPhone: string;
+  readonly anchorName: string;
+  readonly anchorPhone: string;
 };
 
 export type CheckIn = {

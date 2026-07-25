@@ -9,7 +9,7 @@ import type { Profile } from "@/lib/types";
 const TOOL_LABELS: Readonly<Record<string, string>> = {
   sos: "Open SOS now",
   breathe: "Breathe with me",
-  "call-thunai": "Call your Thunai",
+  "call-anchor": "Call your anchor",
   helpline: "Talk to a helpline",
   journal: "Photograph the trigger",
   refusal: "Rehearse a refusal",

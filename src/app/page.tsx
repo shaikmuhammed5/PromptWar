@@ -132,7 +132,7 @@ export default function Page() {
       sos: "sos",
       breathe: "breathe",
       helpline: "helplines",
-      "call-thunai": "helplines",
+      "call-anchor": "helplines",
       journal: "journal",
       refusal: "refusal",
       learn: "learn",
@@ -156,8 +156,7 @@ export default function Page() {
         <h1 className="text-6xl font-black tracking-tight">
           Zync<span className="text-accent">.</span>
         </h1>
-        <p className="mt-3 text-2xl font-semibold text-accent">நீ தனியா இல்ல</p>
-        <p className="mt-1 text-lg text-muted">Nee thaniya illa — you are not alone.</p>
+        <p className="mt-3 text-2xl font-semibold text-accent">You are not alone.</p>
         <p className="mt-6 text-base leading-relaxed">
           A companion for the moment the urge hits. One tap reaches help. No forms, no
           typing, no waiting room.
@@ -222,7 +221,7 @@ export default function Page() {
       <header className="mb-6 flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-muted">
-            {profile.name ? `Vanakkam, ${profile.name}` : "Vanakkam"}
+            {profile.name ? `Hello, ${profile.name}` : "Hello"}
           </p>
           <h1 className="text-2xl font-black">
             Zync<span className="text-accent">.</span>

@@ -120,7 +120,7 @@ export function SosFlow({
         <Card>
           <h1 className="text-3xl font-black">How strong is it right now?</h1>
           <p className="mt-2 text-muted">
-            One tap. That is all Zync needs. Nee thaniya illa.
+            One tap. That is all Zync needs.
           </p>
           <div className="mt-6 grid gap-3">
             {CRAVING_FACES.map((option) => (
@@ -190,12 +190,12 @@ export function SosFlow({
           <Card>
             <h2 className="mb-3 text-lg font-bold">Right now, you can also</h2>
             <div className="grid gap-3">
-              {profile.thunaiPhone ? (
+              {profile.anchorPhone ? (
                 <a
-                  href={`tel:${profile.thunaiPhone.replace(/[^0-9+]/g, "")}`}
+                  href={`tel:${profile.anchorPhone.replace(/[^0-9+]/g, "")}`}
                   className="flex min-h-14 items-center justify-center rounded-xl bg-safe px-5 font-semibold text-[#05230f]"
                 >
-                  📞 Call {profile.thunaiName || "your Thunai"}
+                  📞 Call {profile.anchorName || "your anchor"}
                 </a>
               ) : null}
               <PrimaryButton

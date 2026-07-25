@@ -16,8 +16,8 @@ export const profileSchema = z.object({
   substance,
   streak,
   triggers: z.array(z.string().trim().max(40)).max(12).default([]),
-  thunaiName: z.string().trim().max(40).default(""),
-  thunaiPhone: z.string().trim().max(20).default(""),
+  anchorName: z.string().trim().max(40).default(""),
+  anchorPhone: z.string().trim().max(20).default(""),
 });
 
 export const sosRequestSchema = z.object({
@@ -76,7 +76,7 @@ export const checkInAnalysisSchema = z.object({
   toolsRecommended: z
     .array(
       z
-        .enum(["sos", "breathe", "call-thunai", "helpline", "journal", "refusal", "learn"])
+        .enum(["sos", "breathe", "call-anchor", "helpline", "journal", "refusal", "learn"])
         .catch("breathe"),
     )
     .max(6)

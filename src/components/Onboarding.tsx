@@ -22,8 +22,8 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
   const [streak, setStreak] = useState<StreakBand | null>(null);
   const [triggers, setTriggers] = useState<readonly string[]>([]);
   const [name, setName] = useState("");
-  const [thunaiName, setThunaiName] = useState("");
-  const [thunaiPhone, setThunaiPhone] = useState("");
+  const [anchorName, setAnchorName] = useState("");
+  const [anchorPhone, setAnchorPhone] = useState("");
 
   function toggleTrigger(trigger: string) {
     setTriggers((current) =>
@@ -35,7 +35,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
 
   function finish() {
     if (!substance || !streak) return;
-    onDone({ name, substance, streak, triggers, thunaiName, thunaiPhone });
+    onDone({ name, substance, streak, triggers, anchorName, anchorPhone });
   }
 
   return (
@@ -111,7 +111,7 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
       {step === 3 ? (
         <Card>
           <SectionTitle
-            title="Who is your Thunai?"
+            title="Who is your anchor?"
             subtitle="One person you would call at 2am. Optional — you can add them later."
           />
           <div className="grid gap-4">
@@ -127,8 +127,8 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
             <label className="grid gap-2 text-sm font-medium">
               Their name
               <input
-                value={thunaiName}
-                onChange={(event) => setThunaiName(event.target.value)}
+                value={anchorName}
+                onChange={(event) => setAnchorName(event.target.value)}
                 placeholder="Amma"
                 className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
               />
@@ -136,8 +136,8 @@ export function Onboarding({ onDone }: { onDone: (profile: Profile) => void }) {
             <label className="grid gap-2 text-sm font-medium">
               Their phone
               <input
-                value={thunaiPhone}
-                onChange={(event) => setThunaiPhone(event.target.value)}
+                value={anchorPhone}
+                onChange={(event) => setAnchorPhone(event.target.value)}
                 inputMode="tel"
                 placeholder="98xxxxxxxx"
                 className="min-h-14 rounded-xl border border-border bg-surface-2 px-4 text-base"
