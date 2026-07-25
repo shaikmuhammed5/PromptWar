@@ -20,7 +20,7 @@ export function Card({
   tone?: "raised" | "tinted";
 }) {
   const tones = {
-    raised: "bg-surface-1-1 border-hairline",
+    raised: "bg-surface-1 border-hairline",
     tinted: "bg-surface-2 border-hairline-soft",
   } as const;
   return (
@@ -63,7 +63,7 @@ export function Chip({
       className={`pressable t-body-sm min-h-[3.25rem] rounded-[8px] border px-4 py-3 text-left font-medium ${
         selected
           ? "border-ink bg-ink text-on-primary"
-          : "border-hairline bg-surface-1-1 text-ink hover:border-ink-subtle"
+          : "border-hairline bg-surface-1 text-ink hover:border-ink-subtle"
       }`}
     >
       {label}
@@ -91,7 +91,7 @@ export function PrimaryButton({
 }) {
   const tones = {
     primary: "bg-ink text-on-primary border-ink",
-    secondary: "bg-surface-1-1 text-ink border-hairline hover:border-ink-subtle",
+    secondary: "bg-surface-1 text-ink border-hairline hover:border-ink-subtle",
     emergency: "bg-emergency text-white border-emergency",
     safe: "bg-safe text-white border-safe",
   } as const;
