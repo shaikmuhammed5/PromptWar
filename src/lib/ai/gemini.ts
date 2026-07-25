@@ -104,6 +104,53 @@ export async function generateJson<T>(args: {
   throw lastError;
 }
 
+export type ChatMessage = { role: "user" | "assistant"; text: string };
+
+/**
+ * Multi-turn streaming for the companion chat.
+ *
+ * Same fallback walk as the single-shot stream, but carrying conversation
+ * history. Gemini names the model side "model" rather than "assistant", so the
+ * roles are mapped here and the rest of the app can stay in its own vocabulary.
+ */
+export async function* generateChatStream(args: {
+  system: string;
+  history: readonly ChatMessage[];
+}): AsyncGenerator<string> {
+  const contents = args.history.map((message) => ({
+    role: message.role === "assistant" ? ("model" as const) : ("user" as const),
+    parts: [{ text: message.text }],
+  }));
+
+  let lastError: unknown;
+
+  for (const model of MODELS) {
+    try {
+      const stream = await gemini().models.generateContentStream({
+        model,
+        contents,
+        config: {
+          systemInstruction: args.system,
+          temperature: 0.9,
+          maxOutputTokens: 400,
+        },
+      });
+
+      for await (const chunk of stream) {
+        const text = chunk.text;
+        if (text) yield text;
+      }
+      return;
+    } catch (error) {
+      if (error instanceof MissingKeyError) throw error;
+      lastError = error;
+      if (!isModelUnavailable(error)) throw error;
+    }
+  }
+
+  throw lastError;
+}
+
 /**
  * Token stream for the SOS script — the user starts reading before it finishes.
  *

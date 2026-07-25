@@ -21,7 +21,7 @@ export const VIEWS = [
   "helplines",
   "breathe",
   "caregiver",
-  "craft",
+  "chat",
 ] as const;
 
 export type View = (typeof VIEWS)[number];

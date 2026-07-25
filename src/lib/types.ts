@@ -42,11 +42,51 @@ export type JournalEntry = {
   readonly advice: string;
 };
 
+/**
+ * Companion chat.
+ *
+ * Three modes, and every one of them has a recovery job — there is deliberately
+ * no open-ended "AI friend" mode. Unbounded companionship is the failure mode
+ * the literature warns about hardest for this population.
+ */
+export type ChatMode = "talk" | "practice" | "distract";
+
+export type ChatTurn = {
+  readonly role: "user" | "assistant";
+  readonly text: string;
+  readonly at: number;
+};
+
+export type ChatSession = {
+  readonly id: string;
+  readonly mode: ChatMode;
+  readonly startedAt: number;
+  readonly turns: readonly ChatTurn[];
+  /** practice mode: the situation being rehearsed and who the model plays. */
+  readonly scenario?: string;
+  readonly persona?: string;
+  /** distract mode: which game is running. */
+  readonly game?: string;
+  /** Set when the user closes the session; distract mode logs minutes ridden out. */
+  readonly endedAt?: number;
+};
+
+export type RehearsalScore = {
+  readonly id: string;
+  readonly at: number;
+  readonly scenario: string;
+  readonly worked: readonly string[];
+  readonly strengthen: string;
+  readonly pocketLine: string;
+};
+
 export type AppState = {
   readonly profile: Profile | null;
   readonly checkIns: readonly CheckIn[];
   readonly sosEvents: readonly SosEvent[];
   readonly journal: readonly JournalEntry[];
+  readonly chats: readonly ChatSession[];
+  readonly rehearsals: readonly RehearsalScore[];
 };
 
 export const EMPTY_STATE: AppState = {
@@ -54,6 +94,14 @@ export const EMPTY_STATE: AppState = {
   checkIns: [],
   sosEvents: [],
   journal: [],
+  chats: [],
+  rehearsals: [],
+};
+
+export const CHAT_MODE_LABELS: Readonly<Record<ChatMode, string>> = {
+  talk: "Talk it out",
+  practice: "Practice the moment",
+  distract: "Ride it out",
 };
 
 export const SUBSTANCE_LABELS: Readonly<Record<Substance, string>> = {

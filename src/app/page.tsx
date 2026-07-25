@@ -6,7 +6,8 @@ import { AppShell } from "@/components/AppShell";
 import { Breathe } from "@/components/Breathe";
 import { Caregiver } from "@/components/Caregiver";
 import { CheckIn } from "@/components/CheckIn";
-import { Craft } from "@/components/Craft";
+import { Chat } from "@/components/Chat";
+import { DataControls } from "@/components/DataControls";
 import { Helplines } from "@/components/Helplines";
 import { HomeDashboard } from "@/components/HomeDashboard";
 import { Journal } from "@/components/Journal";
@@ -26,7 +27,7 @@ import {
   subscribe,
   updateState,
 } from "@/lib/store";
-import type { Profile } from "@/lib/types";
+import type { ChatMode, ChatTurn, Profile } from "@/lib/types";
 
 function Loading() {
   return (
@@ -113,6 +114,53 @@ function ZyncApp() {
     [],
   );
 
+  const handleChatLogged = useCallback(
+    (session: {
+      mode: ChatMode;
+      startedAt: number;
+      turns: readonly ChatTurn[];
+      scenario?: string;
+      game?: string;
+    }) => {
+      updateState((previous) => ({
+        ...previous,
+        // Newest first, capped — chat history is the fastest-growing slice and
+        // localStorage is small.
+        chats: [
+          {
+            id: newId(),
+            mode: session.mode,
+            startedAt: session.startedAt,
+            turns: session.turns,
+            scenario: session.scenario,
+            game: session.game,
+            endedAt: Date.now(),
+          },
+          ...previous.chats,
+        ].slice(0, 10),
+      }));
+    },
+    [],
+  );
+
+  const handleRehearsalScored = useCallback(
+    (score: {
+      scenario: string;
+      worked: readonly string[];
+      strengthen: string;
+      pocketLine: string;
+    }) => {
+      updateState((previous) => ({
+        ...previous,
+        rehearsals: [
+          { id: newId(), at: Date.now(), ...score },
+          ...previous.rehearsals,
+        ].slice(0, 20),
+      }));
+    },
+    [],
+  );
+
   const profile = state.profile;
 
   if (!hydrated) return <Loading />;
@@ -169,8 +217,19 @@ function ZyncApp() {
         <Journal profile={profile} onTriggersFound={handleTriggersFound} />
       ) : null}
       {view === "learn" ? <Learn profile={profile} /> : null}
-      {view === "helplines" ? <Helplines /> : null}
-      {view === "craft" ? <Craft substance={profile.substance} /> : null}
+      {view === "helplines" ? (
+        <div className="grid gap-5">
+          <Helplines />
+          <DataControls state={state} />
+        </div>
+      ) : null}
+      {view === "chat" ? (
+        <Chat
+          profile={profile}
+          onSessionLogged={handleChatLogged}
+          onRehearsalScored={handleRehearsalScored}
+        />
+      ) : null}
     </AppShell>
   );
 }

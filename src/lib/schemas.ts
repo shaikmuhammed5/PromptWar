@@ -170,3 +170,36 @@ export const craftResponseSchema = z.object({
 });
 
 export type CraftResponse = z.infer<typeof craftResponseSchema>;
+
+const chatMode = z.enum(["talk", "practice", "distract"]);
+
+const chatTurn = z.object({
+  role: z.enum(["user", "assistant"]),
+  text: z.string().trim().min(1).max(4000),
+});
+
+export const chatRequestSchema = z.object({
+  mode: chatMode,
+  profile: profileSchema,
+  /** Only the tail of the conversation travels; the rest stays in the browser. */
+  history: z.array(chatTurn).min(1).max(24),
+  scenario: z.string().trim().max(120).optional(),
+  persona: z.string().trim().max(120).optional(),
+  game: z.string().trim().max(60).optional(),
+  /** Derived from a turn counter on the client and re-derived on the server. */
+  userTurns: z.number().int().min(0).max(500),
+});
+
+export const rehearsalScoreRequestSchema = z.object({
+  scenario: z.string().trim().min(1).max(120),
+  persona: z.string().trim().min(1).max(120),
+  history: z.array(chatTurn).min(1).max(60),
+});
+
+export const rehearsalScoreSchema = z.object({
+  worked: z.array(z.string().max(300)).max(3).default([]),
+  strengthen: z.string().max(400),
+  pocketLine: z.string().max(240),
+});
+
+export type RehearsalScoreResult = z.infer<typeof rehearsalScoreSchema>;

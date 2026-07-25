@@ -5,6 +5,7 @@ import {
   BookOpen,
   Camera,
   Home,
+  MessageCircle,
   Mic,
   MessageSquareQuote,
   Phone,
@@ -14,6 +15,7 @@ import {
 import type { View } from "@/lib/navigation";
 
 export const TABS: readonly { view: View; Icon: typeof Mic; label: string }[] = [
+  { view: "chat", Icon: MessageCircle, label: "Saathi" },
   { view: "checkin", Icon: Mic, label: "Check in" },
   { view: "refusal", Icon: MessageSquareQuote, label: "Say no" },
   { view: "journal", Icon: Camera, label: "Triggers" },

@@ -11,6 +11,7 @@ import { resetLimiter } from "@/lib/rate-limit";
  */
 const generateJson = vi.fn();
 const generateTextStream = vi.fn();
+const generateChatStream = vi.fn();
 
 class MissingKeyError extends Error {
   constructor() {
@@ -22,6 +23,7 @@ class MissingKeyError extends Error {
 vi.mock("@/lib/ai/gemini", () => ({
   generateJson: (...args: unknown[]) => generateJson(...args),
   generateTextStream: (...args: unknown[]) => generateTextStream(...args),
+  generateChatStream: (...args: unknown[]) => generateChatStream(...args),
   MissingKeyError,
   MODEL: "test-model",
   MODELS: ["test-model"],
@@ -31,6 +33,7 @@ const { POST: checkin } = await import("./checkin/route");
 const { POST: sos } = await import("./sos/route");
 const { POST: craft } = await import("./craft/route");
 const { POST: journal } = await import("./journal/route");
+const { POST: chat } = await import("./chat/route");
 
 const profile = {
   name: "Arun",
@@ -53,6 +56,124 @@ beforeEach(() => {
   resetLimiter();
   generateJson.mockReset();
   generateTextStream.mockReset();
+  generateChatStream.mockReset();
+});
+
+/**
+ * The dependency guardrail is a server concern. The client sends its turn count,
+ * but the stage that shapes the prompt is recomputed here — a guardrail a caller
+ * can switch off is not a guardrail.
+ */
+describe("companion chat", () => {
+  const history = [{ role: "user" as const, text: "hello" }];
+
+  function chatBody(extra: Record<string, unknown> = {}) {
+    return { mode: "talk", profile, history, userTurns: 1, ...extra };
+  }
+
+  test("streams a reply", async () => {
+    generateChatStream.mockReturnValueOnce(
+      (async function* () {
+        yield "I hear ";
+        yield "you.";
+      })(),
+    );
+
+    const response = await chat(post(chatBody()));
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("I hear you.");
+  });
+
+  test("rejects an unknown mode", async () => {
+    const response = await chat(post(chatBody({ mode: "therapy" })));
+
+    expect(response.status).toBe(400);
+    expect(generateChatStream).not.toHaveBeenCalled();
+  });
+
+  test("rejects an empty history", async () => {
+    expect((await chat(post(chatBody({ history: [] })))).status).toBe(400);
+  });
+
+  test("caps how much history a caller may send", async () => {
+    const flood = Array.from({ length: 100 }, () => ({ role: "user" as const, text: "x" }));
+
+    expect((await chat(post(chatBody({ history: flood })))).status).toBe(400);
+  });
+
+  test("a long session gets the closing instruction, not the open one", async () => {
+    generateChatStream.mockReturnValueOnce(
+      (async function* () {
+        yield "take care";
+      })(),
+    );
+
+    await chat(post(chatBody({ userTurns: 25 })));
+
+    const system = generateChatStream.mock.calls[0][0].system as string;
+    expect(system).toMatch(/session is ending now/i);
+  });
+
+  test("an ordinary session gets no wind-down instruction", async () => {
+    generateChatStream.mockReturnValueOnce(
+      (async function* () {
+        yield "go on";
+      })(),
+    );
+
+    await chat(post(chatBody({ userTurns: 2 })));
+
+    const system = generateChatStream.mock.calls[0][0].system as string;
+    expect(system).not.toMatch(/session is ending now/i);
+  });
+
+  test("roleplay mode carries the two-push limit into the prompt", async () => {
+    generateChatStream.mockReturnValueOnce(
+      (async function* () {
+        yield "go on, one won't hurt";
+      })(),
+    );
+
+    await chat(
+      post(
+        chatBody({
+          mode: "practice",
+          scenario: "A party where everyone is drinking",
+          persona: "An old friend who used with you",
+        }),
+      ),
+    );
+
+    const system = generateChatStream.mock.calls[0][0].system as string;
+    expect(system).toMatch(/at most TWICE/);
+    expect(system).toMatch(/BREAK CHARACTER/);
+  });
+
+  test("distraction mode is told not to raise recovery itself", async () => {
+    generateChatStream.mockReturnValueOnce(
+      (async function* () {
+        yield "Is it an animal?";
+      })(),
+    );
+
+    await chat(post(chatBody({ mode: "distract", game: "Twenty questions" })));
+
+    const system = generateChatStream.mock.calls[0][0].system as string;
+    expect(system).toMatch(/Do NOT discuss substances/);
+  });
+
+  test("an upstream failure does not leak detail", async () => {
+    generateChatStream.mockImplementationOnce(() => {
+      throw Object.assign(new Error("project 999 quota"), { status: 429 });
+    });
+
+    const response = await chat(post(chatBody()));
+    const body = (await response.json()) as { error: string };
+
+    expect(response.status).toBe(502);
+    expect(body.error).not.toMatch(/999/);
+  });
 });
 
 describe("input validation happens before the model is called", () => {
