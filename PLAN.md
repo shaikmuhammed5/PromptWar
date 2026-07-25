@@ -118,3 +118,88 @@ Cut for time — build these in order, deploy after each:
 - **Google Gemini Flash (gemini-flash-latest)** — SOS de-escalation scripts (streaming), voice check-in analysis (structured JSON), refusal scripts, lessons + quizzes, caregiver guidance. Location: `src/lib/ai/*` and all routes under `src/app/api/ai/`.
 - **Gemini Flash Vision** (image parts, same model) — trigger journal photo analysis. Location: `src/app/api/ai/journal/route.ts`.
 - **Web Speech API** (browser-native) — speech-to-text for check-ins, text-to-speech for reading scripts aloud. Location: `src/lib/speech.ts`.
+
+---
+
+# Phase 2 — "Saathi" Companion Chat (PROPOSED, awaiting approval)
+
+A personalised, multi-turn AI chat companion — the feature Learnium/Traineon already proved
+the patterns for. But this is a recovery app, and the research review was blunt about
+parasocial dependency in exactly this population. So the design rule is:
+
+> **Every chat mode has a recovery job. There is no open-ended "AI friend" mode.**
+
+The fun is real — games, banter, roleplay — but each one is a clinically defensible tool
+(distraction during urges is CBT urge-surfing; roleplay is skills rehearsal; talk is a
+guided debrief), and the companion actively hands the user back to humans.
+
+## Learnium DNA → Zync mapping
+
+| Learnium (Traineon) pattern | Zync adaptation |
+|---|---|
+| Persona system prompt per roleplay scenario | Companion persona built live from the user's profile (substance, streak, triggers, anchor name) |
+| WS token streaming with reconnect | HTTP streaming (same as SOS route) — no WS infra needed on Vercel |
+| Postgres checkpointer for conversation state | localStorage chat slice, sliding window of last ~20 turns sent per request |
+| Scoring via structured output on session end | Roleplay rehearsal scored on end: what worked, what to strengthen, one line to practice |
+| Personas CRUD + assignment | Fixed mode cards (talk / practice / distract) — no builder needed for hackathon |
+
+## The three modes
+
+**1. Talk it out** — guided conversational debrief. CBT-flavoured active listening: reflects,
+asks one question at a time, names cognitive distortions gently (catastrophising,
+rationalisation), never lectures. Pulls profile context so it says "the old crowd near the
+shop" not "your triggers". After ~12 turns it starts wrapping up and points to the anchor,
+journal, or a helpline — the anti-dependency limit is in the product, not just the prompt.
+
+**2. Practice the moment (roleplay rehearsal)** — the Learnium mechanic, aimed at prevention.
+User picks a scenario (same six as refusal scripts) + who the AI plays (old friend, cousin at
+a wedding, colleague). AI plays the pressurer with realistic-but-bounded pressure — it never
+describes use approvingly, never escalates past two refusals, and if the user "accepts" in
+roleplay the AI breaks character into coach mode: no shame, what happened, try again.
+On "end rehearsal": structured scoring — 2 things that worked, 1 thing to strengthen, one
+exact line to keep in the pocket. Static refusal scripts become live rehearsal → this is the
+strongest problem-statement upgrade in the phase.
+
+**3. Ride it out (distraction games)** — for the craving window that is not an SOS. 20
+questions, word chains, "would you rather", quick trivia — genuinely playful, but framed
+honestly: "urges crest and fall in about 20 minutes; let's be busy while this one falls."
+Timer chip shows minutes survived. On exit: "the urge you just outlasted is logged" → feeds
+the streak/events, visible to caregiver.
+
+## Safety architecture (non-negotiable)
+
+- `assessCrisis()` runs on **every inbound user message** before the model call — same
+  deterministic override as check-in; crisis banner renders inside the chat thread.
+- Companion prompt inherits the full SAFETY frame: no feelings/memory/relationship claims,
+  person-first language, no dosage/withdrawal talk, escalation rules.
+- **Session shape enforced in code, not vibes:** turn counter per session; gentle wrap-up
+  nudge at ~12 turns, hard "let's pause — who could you tell about this?" card at ~20.
+  Roleplay pressure capped at two pushes per refusal.
+- Chat history stays in localStorage like everything else; sliding window only goes to the
+  server, full history never leaves the browser.
+
+## Build plan (≈ half a day)
+
+1. `src/lib/ai/prompts.ts` — three mode system prompts + roleplay scoring prompt.
+2. `/api/ai/chat` — streaming route, multi-turn contents array, Zod schema (mode, history
+   window, profile), reuses model fallback chain + rate limiting. `/api/ai/chat/score` for
+   rehearsal end (structured JSON).
+3. Store: `chats` slice (per-mode sessions, capped), crisis check client-side pre-send.
+4. `Chat.tsx` — mode cards → thread UI (streaming bubbles, mic input via existing speech
+   lib, TTS replay per message), turn-limit cards, roleplay scenario picker + score card.
+5. Nav: new "Saathi" tab (rail + home grid + `v=chat` view). Tests: prompts, turn-limit
+   logic, chat route (mocked), roleplay-score schema.
+
+## Also proposed in this phase (small, high-value)
+
+| Add | Why | Cost |
+|---|---|---|
+| **PWA manifest + icons** | "Install to home screen" — real mobile-app feel, accessibility/judging optics | ~30 min |
+| **Audio-multimodal check-in** | Send the actual recording to Gemini alongside the transcript — true tone analysis, honest multimodality (model hears flat/slurred/agitated) | ~1–2 h, feature-flagged so transcript path stays the fallback |
+| **Export / delete my data** | One button each in a small settings card — DPDP-flavoured, trivially real since data is local | ~20 min |
+| **Milestone moments** | At 7/30/90 days-equivalent streak bands, one generated personal note of recognition (cached) | ~30 min |
+
+## Quota note
+
+Chat is the hungriest feature yet (every turn = a model call). Fallback chain + cache help,
+but **billing on the Gemini project moves from "recommended" to "required" before demo day.**
